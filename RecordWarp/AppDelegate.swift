@@ -12,11 +12,39 @@ import UIKit
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
+    var auth = SPTAuth()
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        auth.redirectURL = URL(string: Keys.redirectURL)
+        auth.sessionUserDefaultsKey = "currentSession"
         return true
+    }
+    
+    func application(_ application: UIApplication, open url: URL, sourceApplication: String?, annotation: Any) -> Bool {
+        //not sure about this, maybe makes more sense to pass in the url from this method?? why are we checking if the app can handle the redirect then passing in the url we get back :/
+        if auth.canHandle(auth.redirectURL) {
+            auth.handleAuthCallback(withTriggeredAuthURL: url) { (error, session) in
+                guard error == nil else {
+                    print("ERROR: handleAuthCallback - \(error.debugDescription)")
+                    return
+                }
+                
+                //TODO: test without adding anything to the user defaults. might be that it is handled automatically.
+                let userDefaults = UserDefaults.standard
+                //convert session to data
+                let sessionData = NSKeyedArchiver.archivedData(withRootObject: session)
+                //store in user defaults
+                userDefaults.set(sessionData, forKey: "SpotifySession")
+                //the following method is supposed to be useless
+                userDefaults.synchronize()
+                
+                NotificationCenter.default.post(name: Notification.Name(rawValue: "loginSuccessfull"), object: nil)
+            }
+            return true
+        }
+        return false
     }
 
     func applicationWillResignActive(_ application: UIApplication) {

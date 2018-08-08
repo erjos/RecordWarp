@@ -12,6 +12,11 @@
 		520A18CF211A50AF001E30F7 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 520A18CD211A50AF001E30F7 /* Main.storyboard */; };
 		520A18D1211A50B1001E30F7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 520A18D0211A50B1001E30F7 /* Assets.xcassets */; };
 		520A18D4211A50B1001E30F7 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 520A18D2211A50B1001E30F7 /* LaunchScreen.storyboard */; };
+		520A18DE211A54ED001E30F7 /* SpotifyAudioPlayback.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 520A18DB211A54ED001E30F7 /* SpotifyAudioPlayback.framework */; };
+		520A18DF211A54ED001E30F7 /* SpotifyAuthentication.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 520A18DC211A54ED001E30F7 /* SpotifyAuthentication.framework */; };
+		520A18E0211A54ED001E30F7 /* SpotifyMetadata.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 520A18DD211A54ED001E30F7 /* SpotifyMetadata.framework */; };
+		520A18E4211A55CF001E30F7 /* BridgeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 520A18E3211A55CF001E30F7 /* BridgeViewController.m */; };
+		520A18E6211A57EC001E30F7 /* Keys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 520A18E5211A57EC001E30F7 /* Keys.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -22,6 +27,13 @@
 		520A18D0211A50B1001E30F7 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		520A18D3211A50B1001E30F7 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		520A18D5211A50B1001E30F7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		520A18DB211A54ED001E30F7 /* SpotifyAudioPlayback.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SpotifyAudioPlayback.framework; sourceTree = "<group>"; };
+		520A18DC211A54ED001E30F7 /* SpotifyAuthentication.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SpotifyAuthentication.framework; sourceTree = "<group>"; };
+		520A18DD211A54ED001E30F7 /* SpotifyMetadata.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SpotifyMetadata.framework; sourceTree = "<group>"; };
+		520A18E1211A55CF001E30F7 /* RecordWarp-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "RecordWarp-Bridging-Header.h"; sourceTree = "<group>"; };
+		520A18E2211A55CF001E30F7 /* BridgeViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BridgeViewController.h; sourceTree = "<group>"; };
+		520A18E3211A55CF001E30F7 /* BridgeViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BridgeViewController.m; sourceTree = "<group>"; };
+		520A18E5211A57EC001E30F7 /* Keys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Keys.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -29,6 +41,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				520A18DE211A54ED001E30F7 /* SpotifyAudioPlayback.framework in Frameworks */,
+				520A18E0211A54ED001E30F7 /* SpotifyMetadata.framework in Frameworks */,
+				520A18DF211A54ED001E30F7 /* SpotifyAuthentication.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -60,6 +75,13 @@
 				520A18D0211A50B1001E30F7 /* Assets.xcassets */,
 				520A18D2211A50B1001E30F7 /* LaunchScreen.storyboard */,
 				520A18D5211A50B1001E30F7 /* Info.plist */,
+				520A18DB211A54ED001E30F7 /* SpotifyAudioPlayback.framework */,
+				520A18DC211A54ED001E30F7 /* SpotifyAuthentication.framework */,
+				520A18DD211A54ED001E30F7 /* SpotifyMetadata.framework */,
+				520A18E2211A55CF001E30F7 /* BridgeViewController.h */,
+				520A18E3211A55CF001E30F7 /* BridgeViewController.m */,
+				520A18E1211A55CF001E30F7 /* RecordWarp-Bridging-Header.h */,
+				520A18E5211A57EC001E30F7 /* Keys.swift */,
 			);
 			path = RecordWarp;
 			sourceTree = "<group>";
@@ -96,6 +118,7 @@
 				TargetAttributes = {
 					520A18C5211A50AF001E30F7 = {
 						CreatedOnToolsVersion = 9.4.1;
+						LastSwiftMigration = 0940;
 					};
 				};
 			};
@@ -135,6 +158,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				520A18E4211A55CF001E30F7 /* BridgeViewController.m in Sources */,
+				520A18E6211A57EC001E30F7 /* Keys.swift in Sources */,
 				520A18CC211A50AF001E30F7 /* ViewController.swift in Sources */,
 				520A18CA211A50AF001E30F7 /* AppDelegate.swift in Sources */,
 			);
@@ -216,6 +241,10 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 11.4;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_LDFLAGS = (
+					"$(OTHER_LDFLAGS)",
+					"-ObjC",
+				);
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -269,6 +298,10 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.4;
 				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = (
+					"$(OTHER_LDFLAGS)",
+					"-ObjC",
+				);
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
@@ -280,8 +313,13 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = R95E8A2PP3;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/RecordWarp",
+				);
 				INFOPLIST_FILE = RecordWarp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -289,6 +327,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.erj.RecordWarp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "RecordWarp/RecordWarp-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -298,8 +338,13 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = R95E8A2PP3;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/RecordWarp",
+				);
 				INFOPLIST_FILE = RecordWarp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -307,6 +352,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.erj.RecordWarp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "RecordWarp/RecordWarp-Bridging-Header.h";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
