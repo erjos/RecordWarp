@@ -16,6 +16,8 @@ class ViewController: UIViewController {
     var webLoginUrl: URL?
     var appLoginUrl: URL?
     
+    // can always improve the search function later
+    
     @IBAction func tapLogin(_ sender: Any) {
         
         //in the tutorial - inside the complettion of this code they made use of the  auth.canHandle URL and sent it the redirect. Need to do some testing around this method to see if it really does anything useful
@@ -40,8 +42,16 @@ class ViewController: UIViewController {
         if(session.isValid()){
             SPTSearch.perform(withQuery: text, queryType: .queryTypeTrack, accessToken: session.accessToken) { (error, list) in
                 let listPage = list as! SPTListPage
-                let items = listPage.items
+                let items = listPage.items as! [SPTPartialTrack]
+                self.performSegue(withIdentifier: "showResults", sender: items)
             }
+        }
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if(segue.identifier == "showResults"){
+            let resultsVC = segue.destination as! ResultsTableViewController
+            resultsVC.results = sender as? [SPTPartialTrack]
         }
     }
     
