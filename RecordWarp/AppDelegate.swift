@@ -32,13 +32,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 }
                 
                 //TODO: test without adding anything to the user defaults. might be that it is handled automatically.
-                let userDefaults = UserDefaults.standard
-                //convert session to data
-                let sessionData = NSKeyedArchiver.archivedData(withRootObject: session)
-                //store in user defaults
-                userDefaults.set(sessionData, forKey: "SpotifySession")
-                //the following method is supposed to be useless
-                userDefaults.synchronize()
+//                let userDefaults = UserDefaults.standard
+//                //convert session to data
+//                let sessionData = NSKeyedArchiver.archivedData(withRootObject: session)
+//                //store in user defaults
+//                userDefaults.set(sessionData, forKey: "SpotifySession")
+//                //the following method is supposed to be useless
+//                userDefaults.synchronize()
                 
                 NotificationCenter.default.post(name: Notification.Name(rawValue: "loginSuccessfull"), object: nil)
             }

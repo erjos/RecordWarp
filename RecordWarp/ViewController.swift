@@ -61,6 +61,18 @@ class ViewController: UIViewController {
         SPTAuth.defaultInstance().requestedScopes = [SPTAuthStreamingScope, SPTAuthPlaylistReadPrivateScope]
         webLoginUrl = SPTAuth.defaultInstance().spotifyWebAuthenticationURL()
         appLoginUrl = SPTAuth.defaultInstance().spotifyAppAuthenticationURL()
+        
+        guard let sessionData = UserDefaults.standard.object(forKey: "currentSession") as? Data else {
+            print("nothing stored!")
+            return
+        }
+        
+        guard let session = NSKeyedUnarchiver.unarchiveObject(with: sessionData) as? SPTSession else {
+            print("No session!")
+            return
+        }
+        
+        self.session = session
     }
 
     override func viewDidLoad() {
@@ -71,7 +83,7 @@ class ViewController: UIViewController {
     }
     
     @objc func updateAfterFirstLogin(){
-        if let sessionObj = UserDefaults.standard.object(forKey: "SpotifySession") {
+        if let sessionObj = UserDefaults.standard.object(forKey: "currentSession") {
             let sessionData = sessionObj as! Data
             let firstTimeSession = NSKeyedUnarchiver.unarchiveObject(with: sessionData) as! SPTSession
             self.session = firstTimeSession
