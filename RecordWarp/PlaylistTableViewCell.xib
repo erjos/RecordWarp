@@ -12,39 +12,71 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
-        <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="KGk-i7-Jjw" customClass="PlaylistTableViewCell" customModule="RecordWarp" customModuleProvider="target">
-            <rect key="frame" x="0.0" y="0.0" width="363" height="44"/>
+        <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" rowHeight="68" id="KGk-i7-Jjw" customClass="PlaylistTableViewCell" customModule="RecordWarp" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="375" height="68"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
             <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
-                <rect key="frame" x="0.0" y="0.0" width="363" height="43.5"/>
+                <rect key="frame" x="0.0" y="0.0" width="375" height="67.5"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="H0U-Fd-qna">
-                        <rect key="frame" x="324" y="9" width="24" height="24"/>
-                        <constraints>
-                            <constraint firstAttribute="width" constant="24" id="2V2-Re-K5r"/>
-                            <constraint firstAttribute="height" constant="24" id="dnD-Ra-9gT"/>
-                        </constraints>
-                        <state key="normal" image="down_arrow"/>
-                    </button>
                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="TJD-Sl-cpZ">
-                        <rect key="frame" x="290" y="9" width="24" height="24"/>
+                        <rect key="frame" x="288" y="16.5" width="31" height="34"/>
                         <constraints>
-                            <constraint firstAttribute="width" constant="24" id="1Na-5x-1y2"/>
-                            <constraint firstAttribute="height" constant="24" id="6cs-rL-cGO"/>
+                            <constraint firstAttribute="width" constant="31" id="1Na-5x-1y2"/>
+                            <constraint firstAttribute="height" constant="34" id="6cs-rL-cGO"/>
                         </constraints>
                         <state key="normal" image="up_arrow"/>
                     </button>
+                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="H0U-Fd-qna">
+                        <rect key="frame" x="329" y="17" width="31" height="34"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="31" id="2V2-Re-K5r"/>
+                            <constraint firstAttribute="height" constant="34" id="dnD-Ra-9gT"/>
+                        </constraints>
+                        <state key="normal" image="down_arrow"/>
+                    </button>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="If You Know You Know" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5AE-4F-IEZ">
+                        <rect key="frame" x="10" y="5" width="172" height="20"/>
+                        <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="17"/>
+                        <nil key="textColor"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Pusha T" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="980-1k-jIi">
+                        <rect key="frame" x="10" y="42.5" width="63" height="20"/>
+                        <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="17"/>
+                        <nil key="textColor"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="3:22" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HEn-A4-6g0">
+                        <rect key="frame" x="237" y="5" width="35" height="21"/>
+                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                        <nil key="textColor"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Daytona" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fXO-dG-jQH">
+                        <rect key="frame" x="93" y="42" width="64" height="20"/>
+                        <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="17"/>
+                        <nil key="textColor"/>
+                        <nil key="highlightedColor"/>
+                    </label>
                 </subviews>
                 <constraints>
+                    <constraint firstItem="HEn-A4-6g0" firstAttribute="top" secondItem="5AE-4F-IEZ" secondAttribute="top" id="0b3-UG-woG"/>
+                    <constraint firstItem="fXO-dG-jQH" firstAttribute="bottom" secondItem="980-1k-jIi" secondAttribute="bottom" id="6tK-7P-CR4"/>
+                    <constraint firstItem="fXO-dG-jQH" firstAttribute="leading" secondItem="980-1k-jIi" secondAttribute="trailing" constant="20" id="DoH-r6-oVy"/>
+                    <constraint firstItem="980-1k-jIi" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="10" id="N3B-Qi-EvY"/>
+                    <constraint firstItem="5AE-4F-IEZ" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="10" id="OlU-TP-1ft"/>
                     <constraint firstItem="TJD-Sl-cpZ" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="P3e-KC-guE"/>
                     <constraint firstItem="H0U-Fd-qna" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="UD9-42-HX5"/>
                     <constraint firstAttribute="trailing" secondItem="H0U-Fd-qna" secondAttribute="trailing" constant="15" id="Ud0-f6-KxU"/>
+                    <constraint firstItem="5AE-4F-IEZ" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="5" id="feK-zL-1ps"/>
+                    <constraint firstItem="TJD-Sl-cpZ" firstAttribute="leading" secondItem="HEn-A4-6g0" secondAttribute="trailing" constant="16" id="m5g-N3-gME"/>
+                    <constraint firstAttribute="bottom" secondItem="980-1k-jIi" secondAttribute="bottom" constant="5" id="qg4-sF-cRd"/>
                     <constraint firstItem="H0U-Fd-qna" firstAttribute="leading" secondItem="TJD-Sl-cpZ" secondAttribute="trailing" constant="10" id="rtE-60-NYK"/>
                 </constraints>
             </tableViewCellContentView>
             <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
-            <point key="canvasLocation" x="13.5" y="54"/>
+            <point key="canvasLocation" x="13.5" y="66"/>
         </tableViewCell>
     </objects>
     <resources>
