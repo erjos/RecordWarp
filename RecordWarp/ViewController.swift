@@ -10,6 +10,8 @@ import UIKit
 
 class ViewController: UIViewController {
     
+    // complex part will be building the live updating playlist that is sending and receiving data. how to keep that in sync and working and all that ish.
+    
     var auth = SPTAuth.defaultInstance()
     var session: SPTSession!
     var player: SPTAudioStreamingController?
