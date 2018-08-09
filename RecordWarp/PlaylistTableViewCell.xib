@@ -36,25 +36,25 @@
                         <state key="normal" image="down_arrow"/>
                     </button>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="If You Know You Know" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5AE-4F-IEZ">
-                        <rect key="frame" x="10" y="5" width="172" height="20"/>
+                        <rect key="frame" x="10" y="10" width="172" height="20"/>
                         <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="17"/>
                         <nil key="textColor"/>
                         <nil key="highlightedColor"/>
                     </label>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Pusha T" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="980-1k-jIi">
-                        <rect key="frame" x="10" y="42.5" width="63" height="20"/>
+                        <rect key="frame" x="10" y="37.5" width="63" height="20"/>
                         <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="17"/>
                         <nil key="textColor"/>
                         <nil key="highlightedColor"/>
                     </label>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="3:22" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HEn-A4-6g0">
-                        <rect key="frame" x="237" y="5" width="35" height="21"/>
+                        <rect key="frame" x="237" y="10" width="35" height="21"/>
                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                         <nil key="textColor"/>
                         <nil key="highlightedColor"/>
                     </label>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Daytona" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fXO-dG-jQH">
-                        <rect key="frame" x="93" y="42" width="64" height="20"/>
+                        <rect key="frame" x="93" y="37" width="64" height="20"/>
                         <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="17"/>
                         <nil key="textColor"/>
                         <nil key="highlightedColor"/>
@@ -69,9 +69,9 @@
                     <constraint firstItem="TJD-Sl-cpZ" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="P3e-KC-guE"/>
                     <constraint firstItem="H0U-Fd-qna" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="UD9-42-HX5"/>
                     <constraint firstAttribute="trailing" secondItem="H0U-Fd-qna" secondAttribute="trailing" constant="15" id="Ud0-f6-KxU"/>
-                    <constraint firstItem="5AE-4F-IEZ" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="5" id="feK-zL-1ps"/>
+                    <constraint firstItem="5AE-4F-IEZ" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="10" id="feK-zL-1ps"/>
                     <constraint firstItem="TJD-Sl-cpZ" firstAttribute="leading" secondItem="HEn-A4-6g0" secondAttribute="trailing" constant="16" id="m5g-N3-gME"/>
-                    <constraint firstAttribute="bottom" secondItem="980-1k-jIi" secondAttribute="bottom" constant="5" id="qg4-sF-cRd"/>
+                    <constraint firstAttribute="bottom" secondItem="980-1k-jIi" secondAttribute="bottom" constant="10" id="qg4-sF-cRd"/>
                     <constraint firstItem="H0U-Fd-qna" firstAttribute="leading" secondItem="TJD-Sl-cpZ" secondAttribute="trailing" constant="10" id="rtE-60-NYK"/>
                 </constraints>
             </tableViewCellContentView>

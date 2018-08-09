@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14113" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14113" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="yK8-ud-CQo">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
@@ -44,18 +44,28 @@
                                     <action selector="enterSearch:" destination="BYZ-38-t0r" eventType="touchUpInside" id="ORX-qw-Uq7"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="15Z-6Y-Eui">
+                                <rect key="frame" x="144" y="482" width="86" height="30"/>
+                                <state key="normal" title="View Playlist"/>
+                                <connections>
+                                    <segue destination="8SH-Ed-gkm" kind="show" id="ij9-yr-fZP"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="zIH-Nk-KVD" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="E5J-KH-FuU"/>
                             <constraint firstItem="yE2-Nl-7Ai" firstAttribute="top" secondItem="zIH-Nk-KVD" secondAttribute="bottom" constant="8" id="EMD-cO-YlG"/>
+                            <constraint firstItem="15Z-6Y-Eui" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="bCx-Lz-6K5"/>
                             <constraint firstItem="CNd-7q-KtD" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="dNH-fZ-fY2"/>
+                            <constraint firstItem="15Z-6Y-Eui" firstAttribute="top" secondItem="yE2-Nl-7Ai" secondAttribute="bottom" constant="30" id="mHo-dZ-MY3"/>
                             <constraint firstItem="CNd-7q-KtD" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="n58-g1-js7"/>
                             <constraint firstItem="zIH-Nk-KVD" firstAttribute="top" secondItem="CNd-7q-KtD" secondAttribute="bottom" constant="36" id="nkH-HU-nvA"/>
                             <constraint firstItem="yE2-Nl-7Ai" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="r2m-7N-dVz"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
+                    <navigationItem key="navigationItem" id="ThF-Lo-Dsk"/>
                     <connections>
                         <outlet property="searchField" destination="zIH-Nk-KVD" id="Zg7-WB-mxn"/>
                         <segue destination="9d4-lg-AZd" kind="show" identifier="showResults" id="swm-rN-k9x"/>
@@ -63,7 +73,41 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-6" y="33"/>
+            <point key="canvasLocation" x="932" y="32.833583208395808"/>
+        </scene>
+        <!--Playlist View Controller-->
+        <scene sceneID="R8a-37-ZHh">
+            <objects>
+                <viewController id="8SH-Ed-gkm" customClass="PlaylistViewController" customModule="RecordWarp" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="pt3-dC-48c">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="aB2-Sf-Xo2">
+                                <rect key="frame" x="0.0" y="64" width="375" height="603"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <connections>
+                                    <outlet property="dataSource" destination="8SH-Ed-gkm" id="yyb-1H-mTr"/>
+                                    <outlet property="delegate" destination="8SH-Ed-gkm" id="yen-CP-xvU"/>
+                                </connections>
+                            </tableView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="aB2-Sf-Xo2" firstAttribute="bottom" secondItem="LWa-cn-jgn" secondAttribute="bottom" id="9ts-JI-fXc"/>
+                            <constraint firstItem="aB2-Sf-Xo2" firstAttribute="leading" secondItem="LWa-cn-jgn" secondAttribute="leading" id="CsI-S4-07u"/>
+                            <constraint firstItem="aB2-Sf-Xo2" firstAttribute="trailing" secondItem="LWa-cn-jgn" secondAttribute="trailing" id="HzD-M8-lDn"/>
+                            <constraint firstItem="aB2-Sf-Xo2" firstAttribute="top" secondItem="LWa-cn-jgn" secondAttribute="top" id="KC8-VI-xbT"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="LWa-cn-jgn"/>
+                    </view>
+                    <connections>
+                        <outlet property="tableView" destination="aB2-Sf-Xo2" id="3Ax-bg-era"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Sh0-YA-HvC" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="932" y="756.97151424287858"/>
         </scene>
         <!--Results Table View Controller-->
         <scene sceneID="73Z-Cn-ZP9">
@@ -91,7 +135,25 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="89b-aV-bY7" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="823" y="33"/>
+            <point key="canvasLocation" x="1760.8" y="32.833583208395808"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="iS7-i6-Cmr">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="yK8-ud-CQo" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="C9c-Nx-01H">
+                        <rect key="frame" x="0.0" y="20" width="375" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="BYZ-38-t0r" kind="relationship" relationship="rootViewController" id="Fh0-0t-s0u"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="bMY-My-Xlt" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-7.2000000000000002" y="32.833583208395808"/>
         </scene>
     </scenes>
 </document>

@@ -20,6 +20,7 @@
 		520A18E8211A893A001E30F7 /* ResultsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 520A18E7211A893A001E30F7 /* ResultsTableViewController.swift */; };
 		529D20CF211C872A0016E849 /* PlaylistTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529D20CD211C872A0016E849 /* PlaylistTableViewCell.swift */; };
 		529D20D0211C872A0016E849 /* PlaylistTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 529D20CE211C872A0016E849 /* PlaylistTableViewCell.xib */; };
+		529D20D2211CFBE40016E849 /* PlaylistViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529D20D1211CFBE40016E849 /* PlaylistViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -40,6 +41,7 @@
 		520A18E7211A893A001E30F7 /* ResultsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultsTableViewController.swift; sourceTree = "<group>"; };
 		529D20CD211C872A0016E849 /* PlaylistTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaylistTableViewCell.swift; sourceTree = "<group>"; };
 		529D20CE211C872A0016E849 /* PlaylistTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PlaylistTableViewCell.xib; sourceTree = "<group>"; };
+		529D20D1211CFBE40016E849 /* PlaylistViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaylistViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -91,6 +93,7 @@
 				520A18E5211A57EC001E30F7 /* Keys.swift */,
 				529D20CD211C872A0016E849 /* PlaylistTableViewCell.swift */,
 				529D20CE211C872A0016E849 /* PlaylistTableViewCell.xib */,
+				529D20D1211CFBE40016E849 /* PlaylistViewController.swift */,
 			);
 			path = RecordWarp;
 			sourceTree = "<group>";
@@ -170,6 +173,7 @@
 			files = (
 				520A18E4211A55CF001E30F7 /* BridgeViewController.m in Sources */,
 				520A18E6211A57EC001E30F7 /* Keys.swift in Sources */,
+				529D20D2211CFBE40016E849 /* PlaylistViewController.swift in Sources */,
 				520A18CC211A50AF001E30F7 /* ViewController.swift in Sources */,
 				520A18CA211A50AF001E30F7 /* AppDelegate.swift in Sources */,
 				520A18E8211A893A001E30F7 /* ResultsTableViewController.swift in Sources */,
