@@ -54,11 +54,17 @@ extension PlaylistViewController: UITableViewDelegate {
 }
 
 extension PlaylistViewController: VoteActionDelegate {
-    func upVote() {
-        //
+    func upVote(cell: PlaylistTableViewCell) {
+        guard let currentIndex = tableView.indexPath(for: cell) else { return }
+        let newIndex = IndexPath(row: currentIndex.row - 1, section: currentIndex.section)
+        
+        tableView.moveRow(at: currentIndex, to: newIndex)
     }
     
-    func downVote() {
-        //
+    func downVote(cell: PlaylistTableViewCell) {
+        guard let currentIndex = tableView.indexPath(for: cell) else { return }
+        let newIndex = IndexPath(row: currentIndex.row + 1, section: currentIndex.section)
+        
+        tableView.moveRow(at: currentIndex, to: newIndex)
     }
 }

@@ -18,10 +18,10 @@ class PlaylistTableViewCell: UITableViewCell {
     }
 
     @IBAction func clickUp(_ sender: Any) {
-        delegate?.upVote()
+        delegate?.upVote(cell: self)
     }
     @IBAction func clickDown(_ sender: Any) {
-        delegate?.downVote()
+        delegate?.downVote(cell: self)
     }
     
     override func setSelected(_ selected: Bool, animated: Bool) {
@@ -32,6 +32,6 @@ class PlaylistTableViewCell: UITableViewCell {
 }
 
 protocol VoteActionDelegate: class {
-    func upVote()
-    func downVote()
+    func upVote(cell: PlaylistTableViewCell)
+    func downVote(cell: PlaylistTableViewCell)
 }
