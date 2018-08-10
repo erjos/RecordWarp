@@ -9,6 +9,18 @@
 import UIKit
 
 class PlaylistViewController: UIViewController {
+    
+    //Vote tracker - users can only vote x amount of times
+    
+    //users can only submit x amount of songs to a playlist
+    
+    //time limits to kick songs off the list and open up spaces for more
+    
+    //what if there was a weird power up shuffle that rearranges the order of all the songs
+    
+    //random function that gives you a random list of songs to start upvoting or down voting.
+    
+    // could auto generate by backfilling the lower end of the list with new songs to see if you like them any better... constantly improve playlists (smirk face) - would need some intelligence for that function
 
     @IBOutlet weak var tableView: UITableView!
     

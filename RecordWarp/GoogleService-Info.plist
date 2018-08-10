@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>AD_UNIT_ID_FOR_BANNER_TEST</key>
+	<string>ca-app-pub-3940256099942544/2934735716</string>
+	<key>AD_UNIT_ID_FOR_INTERSTITIAL_TEST</key>
+	<string>ca-app-pub-3940256099942544/4411468910</string>
+	<key>CLIENT_ID</key>
+	<string>868495236272-jc6jm8bi686bp8ts88o84l9ih4499sal.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.868495236272-jc6jm8bi686bp8ts88o84l9ih4499sal</string>
+	<key>API_KEY</key>
+	<string>AIzaSyAcB2hivabI6WkP2QqmQDi1iWRNPSwAIxs</string>
+	<key>GCM_SENDER_ID</key>
+	<string>868495236272</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.erj.RecordWarp</string>
+	<key>PROJECT_ID</key>
+	<string>recordwarp</string>
+	<key>STORAGE_BUCKET</key>
+	<string>recordwarp.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<true></true>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<false></false>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:868495236272:ios:db4ed7a6024d8efe</string>
+	<key>DATABASE_URL</key>
+	<string>https://recordwarp.firebaseio.com</string>
+</dict>
+</plist>
