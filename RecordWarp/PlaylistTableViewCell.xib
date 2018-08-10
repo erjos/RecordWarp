@@ -26,6 +26,9 @@
                             <constraint firstAttribute="height" constant="34" id="6cs-rL-cGO"/>
                         </constraints>
                         <state key="normal" image="up_arrow"/>
+                        <connections>
+                            <action selector="clickUp:" destination="KGk-i7-Jjw" eventType="touchUpInside" id="667-Xv-FUl"/>
+                        </connections>
                     </button>
                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="H0U-Fd-qna">
                         <rect key="frame" x="329" y="17" width="31" height="34"/>
@@ -34,6 +37,9 @@
                             <constraint firstAttribute="height" constant="34" id="dnD-Ra-9gT"/>
                         </constraints>
                         <state key="normal" image="down_arrow"/>
+                        <connections>
+                            <action selector="clickDown:" destination="KGk-i7-Jjw" eventType="touchUpInside" id="72W-BE-dma"/>
+                        </connections>
                     </button>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="If You Know You Know" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5AE-4F-IEZ">
                         <rect key="frame" x="10" y="10" width="172" height="20"/>

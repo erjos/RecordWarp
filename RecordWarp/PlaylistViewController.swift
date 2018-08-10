@@ -42,14 +42,23 @@ extension PlaylistViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "playlistSong") as! PlaylistTableViewCell
+        cell.delegate = self
         return cell
     }
-    
-    
 }
 
 extension PlaylistViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 68.0
+    }
+}
+
+extension PlaylistViewController: VoteActionDelegate {
+    func upVote() {
+        //
+    }
+    
+    func downVote() {
+        //
     }
 }
