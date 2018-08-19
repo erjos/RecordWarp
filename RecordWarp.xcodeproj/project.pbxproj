@@ -22,9 +22,12 @@
 		529D20D0211C872A0016E849 /* PlaylistTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 529D20CE211C872A0016E849 /* PlaylistTableViewCell.xib */; };
 		529D20D2211CFBE40016E849 /* PlaylistViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529D20D1211CFBE40016E849 /* PlaylistViewController.swift */; };
 		529D20D4211D3AC50016E849 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 529D20D3211D3AC50016E849 /* GoogleService-Info.plist */; };
+		D0A8BA51B1CE02F626B6D603 /* Pods_RecordWarp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 214C147D8A6464E575041868 /* Pods_RecordWarp.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		214C147D8A6464E575041868 /* Pods_RecordWarp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RecordWarp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		3A52D790E8886CE7090A6FA3 /* Pods-RecordWarp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RecordWarp.release.xcconfig"; path = "Pods/Target Support Files/Pods-RecordWarp/Pods-RecordWarp.release.xcconfig"; sourceTree = "<group>"; };
 		520A18C6211A50AF001E30F7 /* RecordWarp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RecordWarp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		520A18C9211A50AF001E30F7 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		520A18CB211A50AF001E30F7 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -44,6 +47,7 @@
 		529D20CE211C872A0016E849 /* PlaylistTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PlaylistTableViewCell.xib; sourceTree = "<group>"; };
 		529D20D1211CFBE40016E849 /* PlaylistViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaylistViewController.swift; sourceTree = "<group>"; };
 		529D20D3211D3AC50016E849 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		72F8B1100C8A117E155E9091 /* Pods-RecordWarp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RecordWarp.debug.xcconfig"; path = "Pods/Target Support Files/Pods-RecordWarp/Pods-RecordWarp.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -54,17 +58,29 @@
 				520A18DE211A54ED001E30F7 /* SpotifyAudioPlayback.framework in Frameworks */,
 				520A18E0211A54ED001E30F7 /* SpotifyMetadata.framework in Frameworks */,
 				520A18DF211A54ED001E30F7 /* SpotifyAuthentication.framework in Frameworks */,
+				D0A8BA51B1CE02F626B6D603 /* Pods_RecordWarp.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		447F21A31658B8F67327AE7C /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				72F8B1100C8A117E155E9091 /* Pods-RecordWarp.debug.xcconfig */,
+				3A52D790E8886CE7090A6FA3 /* Pods-RecordWarp.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
 		520A18BD211A50AF001E30F7 = {
 			isa = PBXGroup;
 			children = (
 				520A18C8211A50AF001E30F7 /* RecordWarp */,
 				520A18C7211A50AF001E30F7 /* Products */,
+				447F21A31658B8F67327AE7C /* Pods */,
+				8AFC0191300049200052EF4B /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -101,6 +117,14 @@
 			path = RecordWarp;
 			sourceTree = "<group>";
 		};
+		8AFC0191300049200052EF4B /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				214C147D8A6464E575041868 /* Pods_RecordWarp.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -108,9 +132,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 520A18D8211A50B1001E30F7 /* Build configuration list for PBXNativeTarget "RecordWarp" */;
 			buildPhases = (
+				72FBA61DD24096D621601693 /* [CP] Check Pods Manifest.lock */,
 				520A18C2211A50AF001E30F7 /* Sources */,
 				520A18C3211A50AF001E30F7 /* Frameworks */,
 				520A18C4211A50AF001E30F7 /* Resources */,
+				66ADBA528DFB7BAC64FDF423 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -169,6 +195,47 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		66ADBA528DFB7BAC64FDF423 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-RecordWarp/Pods-RecordWarp-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/GoogleToolboxForMac/GoogleToolboxForMac.framework",
+				"${BUILT_PRODUCTS_DIR}/nanopb/nanopb.framework",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleToolboxForMac.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/nanopb.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-RecordWarp/Pods-RecordWarp-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		72FBA61DD24096D621601693 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-RecordWarp-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		520A18C2211A50AF001E30F7 /* Sources */ = {
@@ -331,6 +398,7 @@
 		};
 		520A18D9211A50B1001E30F7 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 72F8B1100C8A117E155E9091 /* Pods-RecordWarp.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -356,6 +424,7 @@
 		};
 		520A18DA211A50B1001E30F7 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3A52D790E8886CE7090A6FA3 /* Pods-RecordWarp.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
