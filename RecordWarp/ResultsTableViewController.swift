@@ -12,6 +12,9 @@ class ResultsTableViewController: UITableViewController {
     
     var results:[SPTPartialTrack]?
     
+    //This number should be updated to include the correct delay for the UI
+    var throttler = Throttler(seconds: 5.3)
+    
     var filteredTracks  = [SPTPartialTrack]()
     
     //Might use these later
@@ -146,7 +149,11 @@ class ResultsTableViewController: UITableViewController {
 
 extension ResultsTableViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
-        filterContentForSearchText(searchController.searchBar.text!)
+        throttler.throttle {
+            DispatchQueue.main.async {
+                self.filterContentForSearchText(searchController.searchBar.text!)
+            }
+        }
     }
 }
 
@@ -160,9 +167,9 @@ class Throttler {
     private let queue = DispatchQueue.global(qos: .background)
     private var job : DispatchWorkItem = DispatchWorkItem(block: {})
     private var previousRun: Date = Date.distantPast
-    private var maxInterval: Int
+    private var maxInterval: Double
     
-    init(seconds: Int){
+    init(seconds: Double){
         maxInterval = seconds
     }
     
@@ -180,7 +187,7 @@ class Throttler {
 }
 
 private extension Date {
-    static func second(from referenceDate: Date) -> Int {
-        return Int(Date().timeIntervalSince(referenceDate).rounded())
+    static func second(from referenceDate: Date) -> Double {
+        return Double(Date().timeIntervalSince(referenceDate).rounded())
     }
 }
