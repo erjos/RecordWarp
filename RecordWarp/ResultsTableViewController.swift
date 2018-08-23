@@ -25,6 +25,7 @@ class ResultsTableViewController: UITableViewController {
     }
     
     func filterContentForSearchText(_ searchText: String, scope: String = "All") {
+        //TODO: take scope into account to switch between tracks,albums and artists
         
         guard let tracks = results else {
             return
@@ -36,13 +37,18 @@ class ResultsTableViewController: UITableViewController {
         
         self.tableView.reloadData()
     }
+    
+    func isFiltering() -> Bool {
+        return searchController.isActive && !searchBarIsEmpty()
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
         searchController.searchResultsUpdater = self
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.searchBar.placeholder = "Search for Songs, Albums or Artists"
-        
+        searchController.searchBar.scopeButtonTitles = ["All", "Tracks", "Artists", "Albums"]
+        searchController.searchBar.delegate = self
         navigationItem.searchController = searchController
         navigationItem.hidesSearchBarWhenScrolling = false
         definesPresentationContext = true
@@ -73,13 +79,23 @@ class ResultsTableViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         guard let count = results?.count else { print ("No Data") ; return 0 }
+        if isFiltering() {
+            return filteredTracks.count
+        }
+        
         return count
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "reuseIdentifier", for: indexPath)
         guard let results = results else {return cell}
-        cell.textLabel?.text = results[indexPath.row].name
+        
+        if isFiltering() {
+            cell.textLabel?.text = filteredTracks[indexPath.row].name
+        } else {
+            cell.textLabel?.text = results[indexPath.row].name
+        }
+        
         return cell
     }
 
@@ -133,5 +149,11 @@ class ResultsTableViewController: UITableViewController {
 extension ResultsTableViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
         filterContentForSearchText(searchController.searchBar.text!)
+    }
+}
+
+extension ResultsTableViewController: UISearchBarDelegate {
+    func searchBar(_ searchBar: UISearchBar, selectedScopeButtonIndexDidChange selectedScope: Int) {
+        filterContentForSearchText(searchBar.text!, scope: searchBar.scopeButtonTitles![selectedScope])
     }
 }
