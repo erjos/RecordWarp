@@ -11,10 +11,42 @@ import UIKit
 class ResultsTableViewController: UITableViewController {
     
     var results:[SPTPartialTrack]?
+    
+    var filteredTracks  = [SPTPartialTrack]()
+    
+    //Might use these later
+    var filteredAlbums = [SPTPartialAlbum]()
+    var filteredArtists = [SPTPartialArtist]()
+    
+    let searchController = UISearchController(searchResultsController: nil)
+    
+    func searchBarIsEmpty() -> Bool {
+        return searchController.searchBar.text?.isEmpty ?? true
+    }
+    
+    func filterContentForSearchText(_ searchText: String, scope: String = "All") {
+        
+        guard let tracks = results else {
+            return
+        }
+        
+        filteredTracks = tracks.filter({ (track) -> Bool in
+            return track.name.lowercased().contains(searchText.lowercased())
+        })
+        
+        self.tableView.reloadData()
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        searchController.searchResultsUpdater = self
+        searchController.obscuresBackgroundDuringPresentation = false
+        searchController.searchBar.placeholder = "Search for Songs, Albums or Artists"
+        
+        navigationItem.searchController = searchController
+        navigationItem.hidesSearchBarWhenScrolling = false
+        definesPresentationContext = true
+        
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
 
@@ -22,6 +54,10 @@ class ResultsTableViewController: UITableViewController {
         // self.navigationItem.rightBarButtonItem = self.editButtonItem
         
         self.tableView.register(UITableViewCell.self, forCellReuseIdentifier: "reuseIdentifier")
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        navigationItem.hidesSearchBarWhenScrolling = true
     }
 
     override func didReceiveMemoryWarning() {
@@ -92,4 +128,10 @@ class ResultsTableViewController: UITableViewController {
     }
     */
 
+}
+
+extension ResultsTableViewController: UISearchResultsUpdating {
+    func updateSearchResults(for searchController: UISearchController) {
+        filterContentForSearchText(searchController.searchBar.text!)
+    }
 }

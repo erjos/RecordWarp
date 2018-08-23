@@ -22,7 +22,7 @@ class ViewController: UIViewController {
     
     @IBAction func tapLogin(_ sender: Any) {
         
-        //in the tutorial - inside the complettion of this code they made use of the  auth.canHandle URL and sent it the redirect. Need to do some testing around this method to see if it really does anything useful
+        //in the tutorial - inside the completion of this code they made use of the  auth.canHandle URL and sent it the redirect. Need to do some testing around this method to see if it really does anything useful
         if SPTAuth.supportsApplicationAuthentication() {
             UIApplication.shared.open(appLoginUrl!, options: [:], completionHandler: nil)
         } else {
