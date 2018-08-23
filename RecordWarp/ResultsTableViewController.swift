@@ -82,7 +82,6 @@ class ResultsTableViewController: UITableViewController {
         if isFiltering() {
             return filteredTracks.count
         }
-        
         return count
     }
 
@@ -95,7 +94,6 @@ class ResultsTableViewController: UITableViewController {
         } else {
             cell.textLabel?.text = results[indexPath.row].name
         }
-        
         return cell
     }
 
@@ -155,5 +153,34 @@ extension ResultsTableViewController: UISearchResultsUpdating {
 extension ResultsTableViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, selectedScopeButtonIndexDidChange selectedScope: Int) {
         filterContentForSearchText(searchBar.text!, scope: searchBar.scopeButtonTitles![selectedScope])
+    }
+}
+
+class Throttler {
+    private let queue = DispatchQueue.global(qos: .background)
+    private var job : DispatchWorkItem = DispatchWorkItem(block: {})
+    private var previousRun: Date = Date.distantPast
+    private var maxInterval: Int
+    
+    init(seconds: Int){
+        maxInterval = seconds
+    }
+    
+    func throttle(block: @escaping ()->()){
+        job.cancel()
+        job = DispatchWorkItem(block: {
+            [weak self] in
+            self?.previousRun = Date()
+            block()
+        })
+        let secondsSinceRun = Date.second(from: previousRun)
+        let delay =  secondsSinceRun > maxInterval ? 0 : (maxInterval - secondsSinceRun)
+        queue.asyncAfter(deadline: .now() + Double(delay), execute: job)
+    }
+}
+
+private extension Date {
+    static func second(from referenceDate: Date) -> Int {
+        return Int(Date().timeIntervalSince(referenceDate).rounded())
     }
 }
