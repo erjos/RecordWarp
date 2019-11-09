@@ -40,13 +40,28 @@ class ViewController: UIViewController {
         search(text: query)
     }
     
-    func search(text: String){
-        if(session.isValid()){
-            SPTSearch.perform(withQuery: text, queryType: .queryTypeTrack, accessToken: session.accessToken) { (error, list) in
-                let listPage = list as! SPTListPage
-                let items = listPage.items as! [SPTPartialTrack]
-                self.performSegue(withIdentifier: "showResults", sender: items)
+    func search(text: String) {
+        if(session.isValid()) {
+            guard let urlRequest = try? SPTRequest.createRequest(for: URL(string: "https://api.spotify.com/v1/me/player/recently-played"), withAccessToken: session.accessToken, httpMethod: "Get", values: [:], valueBodyIsJSON: true, sendDataAsQueryString: true) else {
+                return
             }
+            
+            let task = URLSession.shared.dataTask(with: urlRequest) { (data, urlresponse, error) in
+                //handle that shit
+            }
+            
+            task.resume()
+            
+            //execute request
+
+            
+            //** Commented out this search for now
+            
+            //            SPTSearch.perform(withQuery: text, queryType: .queryTypeTrack, accessToken: session.accessToken) { (error, list) in
+//                let listPage = list as! SPTListPage
+//                let items = listPage.items as! [SPTPartialTrack]
+//                self.performSegue(withIdentifier: "showResults", sender: items)
+//            }
         }
     }
     
@@ -60,7 +75,7 @@ class ViewController: UIViewController {
     func setup() {
         SPTAuth.defaultInstance().clientID = Keys.clientID
         SPTAuth.defaultInstance().redirectURL = URL(string: Keys.redirectURL)
-        SPTAuth.defaultInstance().requestedScopes = [SPTAuthStreamingScope, SPTAuthPlaylistReadPrivateScope]
+        SPTAuth.defaultInstance().requestedScopes = [SPTAuthStreamingScope, "user-read-recently-played"]
         webLoginUrl = SPTAuth.defaultInstance().spotifyWebAuthenticationURL()
         appLoginUrl = SPTAuth.defaultInstance().spotifyAppAuthenticationURL()
         
@@ -84,7 +99,7 @@ class ViewController: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(ViewController.updateAfterFirstLogin), name: Notification.Name(rawValue: "loginSuccessfull"), object: nil)
     }
     
-    @objc func updateAfterFirstLogin(){
+    @objc func updateAfterFirstLogin() {
         if let sessionObj = UserDefaults.standard.object(forKey: "currentSession") {
             let sessionData = sessionObj as! Data
             let firstTimeSession = NSKeyedUnarchiver.unarchiveObject(with: sessionData) as! SPTSession
@@ -93,7 +108,7 @@ class ViewController: UIViewController {
         }
     }
 
-    func initializePlayer(authSession: SPTSession){
+    func initializePlayer(authSession: SPTSession) {
         if self.player == nil {
             player = SPTAudioStreamingController.sharedInstance()
             player?.playbackDelegate = self
