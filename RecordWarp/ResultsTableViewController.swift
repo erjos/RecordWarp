@@ -10,6 +10,7 @@ import UIKit
 
 class ResultsTableViewController: UITableViewController {
     
+    var player: SPTAudioStreamingController?
     var results:[SPTPartialTrack]?
     
     //This number should be updated to include the correct delay for the UI
@@ -145,6 +146,23 @@ class ResultsTableViewController: UITableViewController {
     }
     */
 
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        var track: SPTPartialTrack!
+        if isFiltering(){
+            track = self.filteredTracks[indexPath.row]
+            
+            SPTAudioStreamingController.sharedInstance()?.playSpotifyURI(track?.uri.absoluteString, startingWith: 0, startingWithPosition: 0, callback: { (err) in
+                //
+            })
+        } else {
+            track = self.results?[indexPath.row]
+            
+            SPTAudioStreamingController.sharedInstance()?.playSpotifyURI(track?.uri.absoluteString, startingWith: 0, startingWithPosition: 0, callback: { (err) in
+                //
+            })
+        }
+    }
+    
 }
 
 extension ResultsTableViewController: UISearchResultsUpdating {
@@ -169,11 +187,11 @@ class Throttler {
     private var previousRun: Date = Date.distantPast
     private var maxInterval: Double
     
-    init(seconds: Double){
+    init(seconds: Double) {
         maxInterval = seconds
     }
     
-    func throttle(block: @escaping ()->()){
+    func throttle(block: @escaping ()->()) {
         job.cancel()
         job = DispatchWorkItem(block: {
             [weak self] in

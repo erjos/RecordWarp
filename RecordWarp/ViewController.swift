@@ -42,26 +42,12 @@ class ViewController: UIViewController {
     
     func search(text: String) {
         if(session.isValid()) {
-            guard let urlRequest = try? SPTRequest.createRequest(for: URL(string: "https://api.spotify.com/v1/me/player/recently-played"), withAccessToken: session.accessToken, httpMethod: "Get", values: [:], valueBodyIsJSON: true, sendDataAsQueryString: true) else {
-                return
+            //move this method to interactor layer
+            SPTSearch.perform(withQuery: text, queryType: .queryTypeTrack, accessToken: session.accessToken) { (error, list) in
+                let listPage = list as! SPTListPage
+                let items = listPage.items as! [SPTPartialTrack]
+                self.performSegue(withIdentifier: "showResults", sender: items)
             }
-            
-            let task = URLSession.shared.dataTask(with: urlRequest) { (data, urlresponse, error) in
-                //handle that shit
-            }
-            
-            task.resume()
-            
-            //execute request
-
-            
-            //** Commented out this search for now
-            
-            //            SPTSearch.perform(withQuery: text, queryType: .queryTypeTrack, accessToken: session.accessToken) { (error, list) in
-//                let listPage = list as! SPTListPage
-//                let items = listPage.items as! [SPTPartialTrack]
-//                self.performSegue(withIdentifier: "showResults", sender: items)
-//            }
         }
     }
     
@@ -108,6 +94,7 @@ class ViewController: UIViewController {
         }
     }
 
+    //move this into it's own class so we can instantiate view controllers wherever we want them
     func initializePlayer(authSession: SPTSession) {
         if self.player == nil {
             player = SPTAudioStreamingController.sharedInstance()
@@ -126,7 +113,8 @@ class ViewController: UIViewController {
 extension ViewController : SPTAudioStreamingDelegate{
     func audioStreamingDidLogin(_ audioStreaming: SPTAudioStreamingController!) {
         print("logged in")
-        self.player?.playSpotifyURI("spotifyURI", startingWith: 0, startingWithPosition: 0, callback: { (error) in
+        // callback after successful login
+        self.player?.playSpotifyURI("spotify:track:5vUYQW0FbyjkEkMpFrHDmY", startingWith: 0, startingWithPosition: 0, callback: { (error) in
             //handle error- if error is nil we should be playing
         })
     }
