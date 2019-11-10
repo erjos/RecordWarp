@@ -24,6 +24,14 @@ class ResultsTableViewController: UITableViewController {
     
     let searchController = UISearchController(searchResultsController: nil)
     
+    //returns index paths of new tracks that we are adding to the data source
+    private func calculateIndexPathsToReload(from newTracks: [SPTPartialTrack]) -> [IndexPath] {
+        let startIndex = results!.count - newTracks.count
+        let endIndex = startIndex + newTracks.count
+        return (startIndex..<endIndex).map { IndexPath(row: $0, section: 0) }
+    }
+
+    
     func searchBarIsEmpty() -> Bool {
         return searchController.searchBar.text?.isEmpty ?? true
     }
@@ -64,6 +72,7 @@ class ResultsTableViewController: UITableViewController {
         // self.navigationItem.rightBarButtonItem = self.editButtonItem
         
         self.tableView.register(UITableViewCell.self, forCellReuseIdentifier: "reuseIdentifier")
+        self.tableView.prefetchDataSource = self
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -82,7 +91,9 @@ class ResultsTableViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        //return the total count on the result so we can build the table appropriately
         guard let count = results?.count else { print ("No Data") ; return 0 }
+        
         if isFiltering() {
             return filteredTracks.count
         }
@@ -165,6 +176,29 @@ class ResultsTableViewController: UITableViewController {
     
 }
 
+private extension ResultsTableViewController {
+    
+    
+  func isLoadingCell(for indexPath: IndexPath) -> Bool {
+    return indexPath.row >= results?.count ?? 0
+  }
+
+    //calculates cells that need to reload when you receive a new page
+  func visibleIndexPathsToReload(intersecting indexPaths: [IndexPath]) -> [IndexPath] {
+    let indexPathsForVisibleRows = tableView.indexPathsForVisibleRows ?? []
+    let indexPathsIntersection = Set(indexPathsForVisibleRows).intersection(indexPaths)
+    return Array(indexPathsIntersection)
+  }
+    
+}
+
+
+extension ResultsTableViewController: UITableViewDataSourcePrefetching {
+    func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
+        //fetch the next page of the data - the tutorial uses one method, but we can use the function attached to the list page to request the next page I think...
+    }
+}
+
 extension ResultsTableViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
         throttler.throttle {
@@ -178,34 +212,5 @@ extension ResultsTableViewController: UISearchResultsUpdating {
 extension ResultsTableViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, selectedScopeButtonIndexDidChange selectedScope: Int) {
         filterContentForSearchText(searchBar.text!, scope: searchBar.scopeButtonTitles![selectedScope])
-    }
-}
-
-class Throttler {
-    private let queue = DispatchQueue.global(qos: .background)
-    private var job : DispatchWorkItem = DispatchWorkItem(block: {})
-    private var previousRun: Date = Date.distantPast
-    private var maxInterval: Double
-    
-    init(seconds: Double) {
-        maxInterval = seconds
-    }
-    
-    func throttle(block: @escaping ()->()) {
-        job.cancel()
-        job = DispatchWorkItem(block: {
-            [weak self] in
-            self?.previousRun = Date()
-            block()
-        })
-        let secondsSinceRun = Date.second(from: previousRun)
-        let delay =  secondsSinceRun > maxInterval ? 0 : (maxInterval - secondsSinceRun)
-        queue.asyncAfter(deadline: .now() + Double(delay), execute: job)
-    }
-}
-
-private extension Date {
-    static func second(from referenceDate: Date) -> Double {
-        return Double(Date().timeIntervalSince(referenceDate).rounded())
     }
 }

@@ -24,6 +24,7 @@
 		529D20D4211D3AC50016E849 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 529D20D3211D3AC50016E849 /* GoogleService-Info.plist */; };
 		52B7398A2377544800F6A09F /* SpotifyInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B739892377544800F6A09F /* SpotifyInteractor.swift */; };
 		52B7398C2377648300F6A09F /* StreamingPlayerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B7398B2377648300F6A09F /* StreamingPlayerManager.swift */; };
+		52B7398F2377BF8100F6A09F /* Throttler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B7398E2377BF8100F6A09F /* Throttler.swift */; };
 		D0A8BA51B1CE02F626B6D603 /* Pods_RecordWarp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 214C147D8A6464E575041868 /* Pods_RecordWarp.framework */; };
 /* End PBXBuildFile section */
 
@@ -51,6 +52,7 @@
 		529D20D3211D3AC50016E849 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		52B739892377544800F6A09F /* SpotifyInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotifyInteractor.swift; sourceTree = "<group>"; };
 		52B7398B2377648300F6A09F /* StreamingPlayerManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamingPlayerManager.swift; sourceTree = "<group>"; };
+		52B7398E2377BF8100F6A09F /* Throttler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Throttler.swift; sourceTree = "<group>"; };
 		72F8B1100C8A117E155E9091 /* Pods-RecordWarp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RecordWarp.debug.xcconfig"; path = "Pods/Target Support Files/Pods-RecordWarp/Pods-RecordWarp.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -99,6 +101,7 @@
 		520A18C8211A50AF001E30F7 /* RecordWarp */ = {
 			isa = PBXGroup;
 			children = (
+				52B7398D2377BF7200F6A09F /* Util */,
 				52B739882377543200F6A09F /* Interactors */,
 				520A18C9211A50AF001E30F7 /* AppDelegate.swift */,
 				520A18CB211A50AF001E30F7 /* ViewController.swift */,
@@ -129,6 +132,14 @@
 				52B739892377544800F6A09F /* SpotifyInteractor.swift */,
 			);
 			path = Interactors;
+			sourceTree = "<group>";
+		};
+		52B7398D2377BF7200F6A09F /* Util */ = {
+			isa = PBXGroup;
+			children = (
+				52B7398E2377BF8100F6A09F /* Throttler.swift */,
+			);
+			path = Util;
 			sourceTree = "<group>";
 		};
 		8AFC0191300049200052EF4B /* Frameworks */ = {
@@ -262,6 +273,7 @@
 				52B7398A2377544800F6A09F /* SpotifyInteractor.swift in Sources */,
 				520A18CC211A50AF001E30F7 /* ViewController.swift in Sources */,
 				520A18CA211A50AF001E30F7 /* AppDelegate.swift in Sources */,
+				52B7398F2377BF8100F6A09F /* Throttler.swift in Sources */,
 				520A18E8211A893A001E30F7 /* ResultsTableViewController.swift in Sources */,
 				52B7398C2377648300F6A09F /* StreamingPlayerManager.swift in Sources */,
 				529D20CF211C872A0016E849 /* PlaylistTableViewCell.swift in Sources */,

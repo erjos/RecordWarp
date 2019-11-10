@@ -44,6 +44,8 @@ class ViewController: UIViewController {
         if(session.isValid()) {
             //move this method to interactor layer
             SPTSearch.perform(withQuery: text, queryType: .queryTypeTrack, accessToken: session.accessToken) { (error, list) in
+                //there are hasNextPage variables and request next page functions...
+                //should be able to use this to provide a good way to move through the results
                 let listPage = list as! SPTListPage
                 let items = listPage.items as! [SPTPartialTrack]
                 self.performSegue(withIdentifier: "showResults", sender: items)
@@ -65,6 +67,8 @@ class ViewController: UIViewController {
         webLoginUrl = SPTAuth.defaultInstance().spotifyWebAuthenticationURL()
         appLoginUrl = SPTAuth.defaultInstance().spotifyAppAuthenticationURL()
         
+        
+        //Maybe move this session getting method to somewhere more accessible
         guard let sessionData = UserDefaults.standard.object(forKey: "currentSession") as? Data else {
             print("nothing stored!")
             return
