@@ -8,9 +8,14 @@
 
 import Foundation
 
+//I think that we only want to have functions on the interactor for now, but what if the functions need knowledge of the view model so that the function can change to accomodate it?
+
 class SpotifyInteractor: SpotifyProtocol {
     
-    var isFetchInProgress = false
+    //Not sure about this experimenting with putting some of these properties on this separate class
+    var viewModel: SearchResultsViewModel?
+    
+    var isDataFetching = false
     
     func handleClientError(_ error: Error) {
         //error with the client
@@ -20,36 +25,57 @@ class SpotifyInteractor: SpotifyProtocol {
         //server returned an error
     }
     
-    func search(_ query: String, success: @escaping ([SPTPartialTrack]) -> Void) {
-        guard !isFetchInProgress else {
+    //Add Error cases and handling to these methods
+    
+    // gets the next page from an SPTListPage
+    func getNextPage(listPage: SPTListPage, success: @escaping (SPTListPage) -> Void) {
+        guard !isDataFetching else {
             return
         }
         
-        guard let sessionData = UserDefaults.standard.object(forKey: "currentSession") as? Data else {
-              print("nothing stored!")
-              return
-          }
-          
-          guard let session = NSKeyedUnarchiver.unarchiveObject(with: sessionData) as? SPTSession else {
-              print("No session!")
-              return
-          }
+        isDataFetching = true
         
-        //begin the fetch
-        isFetchInProgress = true
-          
-          //self.session = session
-          
-          SPTSearch.perform(withQuery: query, queryType: .queryTypeTrack, accessToken: session.accessToken) { (error, list) in
+        guard let session = self.getSessionFromUserDefaults() else {
+            return
+        }
+        
+        listPage.requestNextPage(withAccessToken: session.accessToken) { (err, list) in
+            let listPage = list as! SPTListPage
+            success(listPage)
+            self.isDataFetching = false
+        }
+    }
+    
+    //gets a single list page for an initial search query
+    func search(_ query: String, success: @escaping (SPTListPage) -> Void) {
+        guard let session = self.getSessionFromUserDefaults() else {
+            return
+        }
+        
+        SPTSearch.perform(withQuery: query, queryType: .queryTypeTrack, accessToken: session.accessToken) { (error, list) in
               //there are hasNextPage variables and request next page functions...
               //should be able to use this to provide a good way to move through the results
               let listPage = list as! SPTListPage
-              let items = listPage.items as! [SPTPartialTrack]
             
-            //end the fetch process
-            self.isFetchInProgress = false
-            success(items)
+            //TODO: move this item initialization out of this method so that we have access to the list page and it's info on the view controller
+              //let items = listPage.items as! [SPTPartialTrack]
+            
+            success(listPage)
           }
+    }
+    
+    func getSessionFromUserDefaults() -> SPTSession? {
+        guard let sessionData = UserDefaults.standard.object(forKey: "currentSession") as? Data else {
+            print("nothing stored!")
+            return nil
+        }
+        
+        guard let session = NSKeyedUnarchiver.unarchiveObject(with: sessionData) as? SPTSession else {
+            print("No session!")
+            return nil
+        }
+        
+        return session
     }
         
   
@@ -84,8 +110,15 @@ class SpotifyInteractor: SpotifyProtocol {
     }
 }
 
+class SearchResultsViewModel {
+    var isFetchInProgress = false
+    var currentResultsPage: SPTListPage?
+}
+
 protocol SpotifyProtocol {
     func getRecentlyPlayedTracks(_ accessToken: String)
     //maybe add the type that we want to search for?
-    func search(_ query: String, success: @escaping ([SPTPartialTrack])->Void)
+    func search(_ query: String, success: @escaping (SPTListPage)->Void)
+    
+    func getNextPage(listPage: SPTListPage, success: @escaping (SPTListPage) -> Void)
 }

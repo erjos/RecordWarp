@@ -11,7 +11,12 @@ import UIKit
 class ResultsTableViewController: UITableViewController {
     
     var player: SPTAudioStreamingController?
+    
     var results:[SPTPartialTrack]?
+    
+    var currentListPage:SPTListPage?
+    
+    lazy var spotifyInteractor: SpotifyProtocol = SpotifyInteractor()
     
     //This number should be updated to include the correct delay for the UI
     var throttler = Throttler(seconds: 5.3)
@@ -65,6 +70,9 @@ class ResultsTableViewController: UITableViewController {
         navigationItem.hidesSearchBarWhenScrolling = false
         definesPresentationContext = true
         
+        //set the results from the listpage we passed in
+        self.results = self.currentListPage?.items as? [SPTPartialTrack]
+        
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
 
@@ -92,18 +100,17 @@ class ResultsTableViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         //return the total count on the result so we can build the table appropriately
-        guard let count = results?.count else { print ("No Data") ; return 0 }
+        guard let count = currentListPage?.totalListLength else { print("No Data"); return 0}
         
         if isFiltering() {
             return filteredTracks.count
         }
-        return count
+        return Int(count)
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "reuseIdentifier", for: indexPath)
         guard let results = results else {return cell}
-        
         if isFiltering() {
             cell.textLabel?.text = filteredTracks[indexPath.row].name
         } else {
@@ -112,51 +119,7 @@ class ResultsTableViewController: UITableViewController {
         return cell
     }
 
-    /*
-    // Override to support conditional editing of the table view.
-    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the specified item to be editable.
-        return true
-    }
-    */
-
-    /*
-    // Override to support editing the table view.
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            // Delete the row from the data source
-            tableView.deleteRows(at: [indexPath], with: .fade)
-        } else if editingStyle == .insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }    
-    }
-    */
-
-    /*
-    // Override to support rearranging the table view.
-    override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
-
-    }
-    */
-
-    /*
-    // Override to support conditional rearranging of the table view.
-    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the item to be re-orderable.
-        return true
-    }
-    */
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
+    //Right now this just plays the song
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         var track: SPTPartialTrack!
         if isFiltering(){
@@ -195,7 +158,32 @@ private extension ResultsTableViewController {
 
 extension ResultsTableViewController: UITableViewDataSourcePrefetching {
     func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
-        //fetch the next page of the data - the tutorial uses one method, but we can use the function attached to the list page to request the next page I think...
+        
+        //fetch the next page of the data - the tutorial uses one method, but we can use the
+        guard let listP = self.currentListPage else {
+            return
+        }
+        
+        guard self.currentListPage!.hasNextPage else {
+            return
+        }
+        
+        self.spotifyInteractor.getNextPage(listPage: listP) { (list) in
+            //update the current list page
+            self.currentListPage = list
+            //append the new tracks from the new page
+            
+            guard let tracks = self.currentListPage?.items as? [SPTPartialTrack] else {
+                return
+            }
+            self.results?.append(contentsOf: tracks)
+            
+            let indexPathsToReload = self.calculateIndexPathsToReload(from: tracks)
+            
+            let indexPathsToReloadnow = self.visibleIndexPathsToReload(intersecting: indexPathsToReload)
+            
+            tableView.reloadRows(at: indexPathsToReloadnow, with: .automatic)
+        }
     }
 }
 

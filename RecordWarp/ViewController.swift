@@ -47,8 +47,8 @@ class ViewController: UIViewController {
                 //there are hasNextPage variables and request next page functions...
                 //should be able to use this to provide a good way to move through the results
                 let listPage = list as! SPTListPage
-                let items = listPage.items as! [SPTPartialTrack]
-                self.performSegue(withIdentifier: "showResults", sender: items)
+                
+                self.performSegue(withIdentifier: "showResults", sender: listPage)
             }
         }
     }
@@ -56,7 +56,7 @@ class ViewController: UIViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if(segue.identifier == "showResults"){
             let resultsVC = segue.destination as! ResultsTableViewController
-            resultsVC.results = sender as? [SPTPartialTrack]
+            resultsVC.currentListPage = sender as? SPTListPage
         }
     }
     
@@ -114,7 +114,7 @@ class ViewController: UIViewController {
     }
 }
 
-extension ViewController : SPTAudioStreamingDelegate{
+extension ViewController : SPTAudioStreamingDelegate {
     func audioStreamingDidLogin(_ audioStreaming: SPTAudioStreamingController!) {
         print("logged in")
         // callback after successful login
