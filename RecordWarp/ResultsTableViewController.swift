@@ -8,50 +8,28 @@
 
 import UIKit
 
+//NOTE: seems that we have an issue when the total number of results is too great - - figure out how to handle the total result so that it is a reasonable number and doesnt reach 97000 lol like when you search for queen
+
+//implement a view model for table views and collections to improve
+
 class ResultsTableViewController: UITableViewController {
     
     var player: SPTAudioStreamingController?
     
-    var results:[SPTPartialTrack]?
-    
-    var currentListPage:SPTListPage?
+    var viewModel = SptSearchViewModel()
     
     lazy var spotifyInteractor: SpotifyProtocol = SpotifyInteractor()
-    
-    //This number should be updated to include the correct delay for the UI
+
     var throttler = Throttler(seconds: 5.3)
     
-    var filteredTracks  = [SPTPartialTrack]()
-    
-    //Might use these later
-    var filteredAlbums = [SPTPartialAlbum]()
-    var filteredArtists = [SPTPartialArtist]()
-    
     let searchController = UISearchController(searchResultsController: nil)
-    
-    //returns index paths of new tracks that we are adding to the data source
-    private func calculateIndexPathsToReload(from newTracks: [SPTPartialTrack]) -> [IndexPath] {
-        let startIndex = results!.count - newTracks.count
-        let endIndex = startIndex + newTracks.count
-        return (startIndex..<endIndex).map { IndexPath(row: $0, section: 0) }
-    }
-
     
     func searchBarIsEmpty() -> Bool {
         return searchController.searchBar.text?.isEmpty ?? true
     }
     
     func filterContentForSearchText(_ searchText: String, scope: String = "All") {
-        //TODO: take scope into account to switch between tracks,albums and artists
-        
-        guard let tracks = results else {
-            return
-        }
-        
-        filteredTracks = tracks.filter({ (track) -> Bool in
-            return track.name.lowercased().contains(searchText.lowercased())
-        })
-        
+        viewModel.filterContentForSearchText(searchText, scope: scope)
         self.tableView.reloadData()
     }
     
@@ -71,7 +49,7 @@ class ResultsTableViewController: UITableViewController {
         definesPresentationContext = true
         
         //set the results from the listpage we passed in
-        self.results = self.currentListPage?.items as? [SPTPartialTrack]
+        self.viewModel.results = viewModel.currentListPage?.items as? [SPTPartialTrack]
         
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
@@ -99,20 +77,17 @@ class ResultsTableViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        //return the total count on the result so we can build the table appropriately
-        guard let count = currentListPage?.totalListLength else { print("No Data"); return 0}
-        
         if isFiltering() {
-            return filteredTracks.count
+            return viewModel.filteredTracks.count
         }
-        return Int(count)
+        return viewModel.totalCount
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "reuseIdentifier", for: indexPath)
-        guard let results = results else {return cell}
+        guard let results = viewModel.results else {return cell}
         if isFiltering() {
-            cell.textLabel?.text = filteredTracks[indexPath.row].name
+            cell.textLabel?.text = viewModel.filteredTracks[indexPath.row].name
         } else {
             cell.textLabel?.text = results[indexPath.row].name
         }
@@ -123,13 +98,13 @@ class ResultsTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         var track: SPTPartialTrack!
         if isFiltering(){
-            track = self.filteredTracks[indexPath.row]
+            track = viewModel.filteredTracks[indexPath.row]
             
             SPTAudioStreamingController.sharedInstance()?.playSpotifyURI(track?.uri.absoluteString, startingWith: 0, startingWithPosition: 0, callback: { (err) in
                 //
             })
         } else {
-            track = self.results?[indexPath.row]
+            track = viewModel.results?[indexPath.row]
             
             SPTAudioStreamingController.sharedInstance()?.playSpotifyURI(track?.uri.absoluteString, startingWith: 0, startingWithPosition: 0, callback: { (err) in
                 //
@@ -140,49 +115,35 @@ class ResultsTableViewController: UITableViewController {
 }
 
 private extension ResultsTableViewController {
-    
-    
+    //TODO: currently we're not using this, but we need to implement a loading state and this should be used to improve the UI when we do this
   func isLoadingCell(for indexPath: IndexPath) -> Bool {
-    return indexPath.row >= results?.count ?? 0
+    return indexPath.row >= viewModel.results?.count ?? 0
   }
 
-    //calculates cells that need to reload when you receive a new page
+    //calculates the visible cells that should be reloaded when you update the data source
   func visibleIndexPathsToReload(intersecting indexPaths: [IndexPath]) -> [IndexPath] {
     let indexPathsForVisibleRows = tableView.indexPathsForVisibleRows ?? []
     let indexPathsIntersection = Set(indexPathsForVisibleRows).intersection(indexPaths)
     return Array(indexPathsIntersection)
   }
-    
 }
 
 
 extension ResultsTableViewController: UITableViewDataSourcePrefetching {
     func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
-        
         //fetch the next page of the data - the tutorial uses one method, but we can use the
-        guard let listP = self.currentListPage else {
+        guard let listP = viewModel.currentListPage else {
             return
         }
-        
-        guard self.currentListPage!.hasNextPage else {
+        //check if there is a next page
+        guard viewModel.currentListPage!.hasNextPage else {
             return
         }
-        
-        self.spotifyInteractor.getNextPage(listPage: listP) { (list) in
-            //update the current list page
-            self.currentListPage = list
-            //append the new tracks from the new page
-            
-            guard let tracks = self.currentListPage?.items as? [SPTPartialTrack] else {
-                return
-            }
-            self.results?.append(contentsOf: tracks)
-            
-            let indexPathsToReload = self.calculateIndexPathsToReload(from: tracks)
-            
-            let indexPathsToReloadnow = self.visibleIndexPathsToReload(intersecting: indexPathsToReload)
-            
-            tableView.reloadRows(at: indexPathsToReloadnow, with: .automatic)
+        //fetch the next page and update the view model and table view accordingly
+        self.spotifyInteractor.getNextPage(listPage: listP) { (nextPage) in
+            let reload = self.viewModel.handleNextPage(nextPage)
+            let indexPathsToReload = self.visibleIndexPathsToReload(intersecting: reload)
+            tableView.reloadRows(at: indexPathsToReload, with: .automatic)
         }
     }
 }

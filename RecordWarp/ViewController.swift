@@ -56,7 +56,9 @@ class ViewController: UIViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if(segue.identifier == "showResults"){
             let resultsVC = segue.destination as! ResultsTableViewController
-            resultsVC.currentListPage = sender as? SPTListPage
+            
+            //Maybe just initialize the viewModel with a list page? Idk if i like how this works
+            resultsVC.viewModel.currentListPage = sender as? SPTListPage
         }
     }
     
