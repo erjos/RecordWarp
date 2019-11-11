@@ -23,29 +23,19 @@ class SearchResultsTableViewCell: UITableViewCell {
     @IBAction func addSong(_ sender: Any) {
     }
     
-    func setCellImage(_ url: URL) {
-        getData(from: url) { (data, response, err) in
-            DispatchQueue.main.async() {
-                //set the image on the main thread
-                self.albumImage.image = UIImage(data: data!)
-            }
-        }
-    }
-    
-    func getData(from url: URL, completion: @escaping (Data?, URLResponse?, Error?) -> ()) {
-        URLSession.shared.dataTask(with: url, completionHandler: completion).resume()
+    func setCellImage(_ image: UIImage) {
+        self.albumImage.image = image
+        
+        //move this somewhere else
+
     }
     
     func setCellForTrack(_ track: SPTPartialTrack) {
         self.contentName.text = track.name
         self.additionalInfo.text = track.album.name
-        if let artist = track.artists.first as? SPTArtist {
+        if let artist = track.artists.first as? SPTPartialArtist {
             self.infoTwo.text = artist.name
         }
-        if let albumImage = track.album.covers.first as? SPTImage {
-            setCellImage(albumImage.imageURL)
-        }
-        
     }
     
     override func setSelected(_ selected: Bool, animated: Bool) {

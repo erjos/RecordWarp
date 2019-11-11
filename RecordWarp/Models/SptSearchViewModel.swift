@@ -15,7 +15,10 @@ class SptSearchViewModel {
     var filteredAlbums = [SPTPartialAlbum]()
     var filteredArtists = [SPTPartialArtist]()
     
+    //TODO: filtering doesn't work right now
     var filteredTracks  = [SPTPartialTrack]()
+    
+    var imageCache = NSCache<NSString, UIImage>()
     
     //** returns total count table view uses to generate rows (max 3000 rows for efficiency)
     var totalCount: Int {
@@ -25,9 +28,33 @@ class SptSearchViewModel {
         return (Int(count) > 3000) ? 3000 : Int(count)
     }
     
-    func getImageForTrack(track: SPTPartialTrack) {
-        //gotta test if this works
-        let imageUrl = track.album.smallestCover.imageURL
+    func getImageForTrack(track: SPTPartialTrack, callback: @escaping (UIImage)->()) {
+        if let albumImage = track.album.covers.first as? SPTImage {
+            
+            if let image = self.imageCache.object(forKey: albumImage.imageURL.absoluteString as NSString) {
+                callback(image)
+            } else {
+                self.fetchImage(url: albumImage.imageURL) { (image) in
+                    callback(image)
+                }
+            }
+        }
+    }
+    
+    //fetches the image using the get data method and returns a UIImage - adds to cache
+    func fetchImage(url: URL, success: @escaping (UIImage)->()) {
+        getData(from: url) { (data, response, err) in
+            //TODO: remove force unwrap and add error handling
+            guard let image = UIImage(data: data!) else {
+                return
+            }
+            success(image)
+        }
+    }
+    
+    //gets data from url
+    func getData(from url: URL, completion: @escaping (Data?, URLResponse?, Error?) -> ()) {
+        URLSession.shared.dataTask(with: url, completionHandler: completion).resume()
     }
     
     //** returns index paths of new tracks that we are adding to the data source

@@ -8,20 +8,13 @@
 
 import UIKit
 
-//NOTE: seems that we have an issue when the total number of results is too great - - figure out how to handle the total result so that it is a reasonable number and doesnt reach 97000 lol like when you search for queen
-
-//implement a view model for table views and collections to improve
-
+//should maybe at a cache to ensure we're not fetching the same image from url if it exists
 class ResultsTableViewController: UITableViewController {
     
     var player: SPTAudioStreamingController?
-    
     var viewModel = SptSearchViewModel()
-    
     lazy var spotifyInteractor: SpotifyProtocol = SpotifyInteractor()
-
     var throttler = Throttler(seconds: 5.3)
-    
     let searchController = UISearchController(searchResultsController: nil)
     
     func searchBarIsEmpty() -> Bool {
@@ -43,6 +36,7 @@ class ResultsTableViewController: UITableViewController {
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.searchBar.placeholder = "Search for Songs, Albums or Artists"
         searchController.searchBar.scopeButtonTitles = ["All", "Tracks", "Artists", "Albums"]
+            
         searchController.searchBar.delegate = self
         navigationItem.searchController = searchController
         navigationItem.hidesSearchBarWhenScrolling = false
@@ -84,19 +78,30 @@ class ResultsTableViewController: UITableViewController {
         }
         return viewModel.totalCount
     }
+    
+    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        return "Tracks"
+    }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "resultCell", for: indexPath) as? SearchResultsTableViewCell else {
             fatalError("Did not create cell")
         }
         
-        guard let results = viewModel.results else {return cell}
+        guard let results = viewModel.results else { return cell }
+        
         if isFiltering() {
             let track = viewModel.filteredTracks[indexPath.row]
             cell.setCellForTrack(track)
         } else {
-            let track = viewModel.results?[indexPath.row]
-            cell.setCellForTrack(track!)
+            let track = results[indexPath.row]
+            cell.setCellForTrack(track)
+            self.viewModel.getImageForTrack(track: track) { (albumImage) in
+                
+                DispatchQueue.main.async {
+                    cell.setCellImage(albumImage)
+                }
+            }
         }
         return cell
     }
