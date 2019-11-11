@@ -25,6 +25,11 @@ class SptSearchViewModel {
         return (Int(count) > 3000) ? 3000 : Int(count)
     }
     
+    func getImageForTrack(track: SPTPartialTrack) {
+        //gotta test if this works
+        let imageUrl = track.album.smallestCover.imageURL
+    }
+    
     //** returns index paths of new tracks that we are adding to the data source
     private func calculateIndexPathsToReload(from newTracks: [SPTPartialTrack]) -> [IndexPath] {
         let startIndex = results!.count - newTracks.count

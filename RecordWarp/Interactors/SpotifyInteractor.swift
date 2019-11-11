@@ -40,6 +40,8 @@ class SpotifyInteractor: SpotifyProtocol {
         }
         
         listPage.requestNextPage(withAccessToken: session.accessToken) { (err, list) in
+            //This crashes if there is a client error -
+            
             let listPage = list as! SPTListPage
             success(listPage)
             self.isDataFetching = false

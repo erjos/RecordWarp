@@ -57,7 +57,9 @@ class ResultsTableViewController: UITableViewController {
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         // self.navigationItem.rightBarButtonItem = self.editButtonItem
         
-        self.tableView.register(UITableViewCell.self, forCellReuseIdentifier: "reuseIdentifier")
+        //self.tableView.register(UITableViewCell.self, forCellReuseIdentifier: "reuseIdentifier")
+        
+        self.tableView.register(UINib(nibName: "SearchResultsTableViewCell", bundle: Bundle.main), forCellReuseIdentifier: "resultCell")
         self.tableView.prefetchDataSource = self
     }
     
@@ -84,12 +86,17 @@ class ResultsTableViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "reuseIdentifier", for: indexPath)
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "resultCell", for: indexPath) as? SearchResultsTableViewCell else {
+            fatalError("Did not create cell")
+        }
+        
         guard let results = viewModel.results else {return cell}
         if isFiltering() {
-            cell.textLabel?.text = viewModel.filteredTracks[indexPath.row].name
+            let track = viewModel.filteredTracks[indexPath.row]
+            cell.setCellForTrack(track)
         } else {
-            cell.textLabel?.text = results[indexPath.row].name
+            let track = viewModel.results?[indexPath.row]
+            cell.setCellForTrack(track!)
         }
         return cell
     }
