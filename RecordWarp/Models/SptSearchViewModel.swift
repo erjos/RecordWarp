@@ -35,6 +35,8 @@ class SptSearchViewModel {
                 callback(image)
             } else {
                 self.fetchImage(url: albumImage.imageURL) { (image) in
+                    //add the image to the cache
+                    self.imageCache.setObject(image, forKey: albumImage.imageURL.absoluteString as NSString)
                     callback(image)
                 }
             }

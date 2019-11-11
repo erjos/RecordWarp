@@ -127,10 +127,10 @@ class ResultsTableViewController: UITableViewController {
 }
 
 private extension ResultsTableViewController {
-    //TODO: currently we're not using this, but we need to implement a loading state and this should be used to improve the UI when we do this
-  func isLoadingCell(for indexPath: IndexPath) -> Bool {
-    return indexPath.row >= viewModel.results?.count ?? 0
-  }
+
+    func isLoadingCell(for indexPath: IndexPath) -> Bool {
+        return indexPath.row >= viewModel.results?.count ?? 0
+    }
 
     //calculates the visible cells that should be reloaded when you update the data source
   func visibleIndexPathsToReload(intersecting indexPaths: [IndexPath]) -> [IndexPath] {
@@ -143,6 +143,15 @@ private extension ResultsTableViewController {
 
 extension ResultsTableViewController: UITableViewDataSourcePrefetching {
     func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
+        
+        let shouldWeLoad = indexPaths.contains { (path) -> Bool in
+            return self.isLoadingCell(for: path)
+        }
+        
+        guard shouldWeLoad else {
+            return
+        }
+        
         //fetch the next page of the data - the tutorial uses one method, but we can use the
         guard let listP = viewModel.currentListPage else {
             return
