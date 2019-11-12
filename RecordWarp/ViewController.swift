@@ -119,6 +119,7 @@ class ViewController: UIViewController {
             player?.login(withAccessToken: authSession.accessToken)
         }
     }
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
@@ -173,7 +174,17 @@ extension ViewController: UICollectionViewDragDelegate, UICollectionViewDropDele
     }
     
     fileprivate func reorderItems(coordinator: UICollectionViewDropCoordinator, destination: IndexPath, collectionView: UICollectionView) {
-        
+        if let item = coordinator.items.first,
+            let sourceIndex = item.sourceIndexPath {
+            
+            collectionView.performBatchUpdates({
+                //remove items at: sourche ibndexPath.item
+                //insert new item at destinationIndexPath.item
+                
+                collectionView.deleteItems(at: [sourceIndex])
+                collectionView.insertItems(at: [destination])
+            }, completion: nil)
+        }
     }
     
     func collectionView(_ collectionView: UICollectionView, dropSessionDidUpdate session: UIDropSession, withDestinationIndexPath destinationIndexPath: IndexPath?) -> UICollectionViewDropProposal {
