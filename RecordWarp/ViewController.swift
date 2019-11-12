@@ -94,9 +94,9 @@ class ViewController: UIViewController {
         //setup collection view
         self.collection.register(UINib(nibName: "MainCollectionViewCell", bundle: Bundle.main), forCellWithReuseIdentifier: "collectionCell")
         collection.delegate = self
-        //collection.collectionViewLayout = CollectionViewLa
-        
         collection.reloadData()
+        collection.dragDelegate = self
+        collection.dropDelegate = self
     }
     
     @objc func updateAfterFirstLogin() {
@@ -141,7 +141,7 @@ extension ViewController : SPTAudioStreamingPlaybackDelegate{
 //I think it didnt work because I didnt add the extension for the delegate at the same time
 extension ViewController : UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 5
+        return 8
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -149,13 +149,43 @@ extension ViewController : UICollectionViewDataSource, UICollectionViewDelegateF
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let size = CGSize(width: ((collectionView.frame.width-8)/3), height: ((collectionView.frame.width-8)/3))
+        let size = CGSize(width: ((collectionView.frame.width-20)/3), height: ((collectionView.frame.width-20)/3))
         return size
     }
 }
-//extension ViewController:  {
-//    private func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-//        let size = CGSize(width: ((collectionView.frame.width-8)/3), height: ((collectionView.frame.width-8)/3))
-//        return size
-//    }
-//}
+
+extension ViewController: UICollectionViewDragDelegate, UICollectionViewDropDelegate {
+    func collectionView(_ collectionView: UICollectionView, performDropWith coordinator: UICollectionViewDropCoordinator) {
+        var destinationIndexPath: IndexPath
+        if let indexPath = coordinator.destinationIndexPath {
+            destinationIndexPath = indexPath
+        } else {
+            let row = collectionView.numberOfItems(inSection: 0)
+            destinationIndexPath = IndexPath(row: row - 1, section: 0)
+        }
+        
+        if coordinator.proposal.operation == .move {
+            
+            //TODO: implement logic for this function
+            self.reorderItems(coordinator: coordinator, destination: destinationIndexPath, collectionView: collectionView)
+        }
+    }
+    
+    fileprivate func reorderItems(coordinator: UICollectionViewDropCoordinator, destination: IndexPath, collectionView: UICollectionView) {
+        
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, dropSessionDidUpdate session: UIDropSession, withDestinationIndexPath destinationIndexPath: IndexPath?) -> UICollectionViewDropProposal {
+        if collectionView.hasActiveDrag {
+            return UICollectionViewDropProposal(operation: .move, intent: .insertAtDestinationIndexPath)
+        }
+        return UICollectionViewDropProposal(operation: .forbidden)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, itemsForBeginning session: UIDragSession, at indexPath: IndexPath) -> [UIDragItem] {
+        let item = "this thing"
+        let itemProvider = NSItemProvider(object: item as NSString)
+        let dragItem = UIDragItem(itemProvider: itemProvider)
+        return [dragItem]
+    }
+}

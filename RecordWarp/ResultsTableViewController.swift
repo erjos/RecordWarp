@@ -55,6 +55,8 @@ class ResultsTableViewController: UITableViewController {
         
         self.tableView.register(UINib(nibName: "SearchResultsTableViewCell", bundle: Bundle.main), forCellReuseIdentifier: "resultCell")
         self.tableView.prefetchDataSource = self
+        
+        self.navigationController?.navigationBar.prefersLargeTitles = true
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -77,10 +79,6 @@ class ResultsTableViewController: UITableViewController {
             return viewModel.filteredTracks.count
         }
         return viewModel.totalCount
-    }
-    
-    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return "Tracks"
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
