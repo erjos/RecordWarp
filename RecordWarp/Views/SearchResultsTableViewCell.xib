@@ -18,7 +18,7 @@
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Content Name" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eRu-A3-cay">
-                        <rect key="frame" x="60" y="14.5" width="111" height="21"/>
+                        <rect key="frame" x="60" y="10" width="111" height="21"/>
                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                         <nil key="textColor"/>
                         <nil key="highlightedColor"/>
@@ -37,14 +37,13 @@
                         <nil key="highlightedColor"/>
                     </label>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="add. info" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="uJ8-MS-A9x">
-                        <rect key="frame" x="133" y="35" width="50" height="15"/>
+                        <rect key="frame" x="143" y="35" width="50" height="15"/>
                         <fontDescription key="fontDescription" type="system" pointSize="12"/>
                         <nil key="textColor"/>
                         <nil key="highlightedColor"/>
                     </label>
-                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="IjK-Eb-ecg">
-                        <rect key="frame" x="367" y="8" width="33" height="34"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="IjK-Eb-ecg">
+                        <rect key="frame" x="371" y="8" width="33" height="34"/>
                         <state key="normal" title="Add">
                             <color key="titleColor" cocoaTouchSystemColor="darkTextColor"/>
                         </state>
@@ -54,15 +53,19 @@
                     </button>
                 </subviews>
                 <constraints>
+                    <constraint firstItem="IjK-Eb-ecg" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="eRu-A3-cay" secondAttribute="trailing" constant="5" id="0SC-GY-8eb"/>
                     <constraint firstItem="V2a-Y5-Tnm" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" id="3Rj-mW-wwe"/>
+                    <constraint firstItem="IjK-Eb-ecg" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="uJ8-MS-A9x" secondAttribute="trailing" constant="5" id="6ov-2D-wmW"/>
+                    <constraint firstItem="IjK-Eb-ecg" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="E15-NF-wXk"/>
                     <constraint firstAttribute="bottom" secondItem="6jr-Vp-b83" secondAttribute="bottom" id="GTo-Ah-afj"/>
                     <constraint firstAttribute="bottom" secondItem="V2a-Y5-Tnm" secondAttribute="bottom" id="KRJ-mR-2ku"/>
                     <constraint firstItem="V2a-Y5-Tnm" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" id="eoN-21-QbA"/>
+                    <constraint firstItem="eRu-A3-cay" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="10" id="g0c-pi-kzC"/>
                     <constraint firstItem="eRu-A3-cay" firstAttribute="leading" secondItem="V2a-Y5-Tnm" secondAttribute="trailing" constant="10" id="hsx-p2-I4t"/>
                     <constraint firstItem="6jr-Vp-b83" firstAttribute="top" secondItem="uJ8-MS-A9x" secondAttribute="top" id="k3v-af-w1n"/>
-                    <constraint firstItem="uJ8-MS-A9x" firstAttribute="leading" secondItem="6jr-Vp-b83" secondAttribute="trailing" constant="5" id="nx1-KQ-8or"/>
+                    <constraint firstItem="uJ8-MS-A9x" firstAttribute="leading" secondItem="6jr-Vp-b83" secondAttribute="trailing" constant="15" id="nx1-KQ-8or"/>
                     <constraint firstItem="6jr-Vp-b83" firstAttribute="leading" secondItem="eRu-A3-cay" secondAttribute="leading" id="sS2-Sg-TzD"/>
-                    <constraint firstItem="eRu-A3-cay" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="z5M-1r-wfN"/>
+                    <constraint firstAttribute="trailing" secondItem="IjK-Eb-ecg" secondAttribute="trailing" constant="10" id="wVb-uU-Q5z"/>
                 </constraints>
             </tableViewCellContentView>
             <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>

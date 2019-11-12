@@ -12,9 +12,6 @@ import Foundation
 
 class SpotifyInteractor: SpotifyProtocol {
     
-    //Not sure about this experimenting with putting some of these properties on this separate class
-    var viewModel: SearchResultsViewModel?
-    
     var isDataFetching = false
     
     func handleClientError(_ error: Error) {

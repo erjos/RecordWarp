@@ -28,6 +28,9 @@
 		52B739922379247400F6A09F /* SptSearchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B739912379247300F6A09F /* SptSearchViewModel.swift */; };
 		52B7399623792F5200F6A09F /* SearchResultsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B7399423792F5200F6A09F /* SearchResultsTableViewCell.swift */; };
 		52B7399723792F5200F6A09F /* SearchResultsTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 52B7399523792F5200F6A09F /* SearchResultsTableViewCell.xib */; };
+		52B73999237A224100F6A09F /* CacheLRU.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B73998237A224100F6A09F /* CacheLRU.swift */; };
+		52B7399C237A51C100F6A09F /* MainCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B7399A237A51C100F6A09F /* MainCollectionViewCell.swift */; };
+		52B7399D237A51C100F6A09F /* MainCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 52B7399B237A51C100F6A09F /* MainCollectionViewCell.xib */; };
 		D0A8BA51B1CE02F626B6D603 /* Pods_RecordWarp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 214C147D8A6464E575041868 /* Pods_RecordWarp.framework */; };
 /* End PBXBuildFile section */
 
@@ -59,6 +62,9 @@
 		52B739912379247300F6A09F /* SptSearchViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SptSearchViewModel.swift; sourceTree = "<group>"; };
 		52B7399423792F5200F6A09F /* SearchResultsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchResultsTableViewCell.swift; sourceTree = "<group>"; };
 		52B7399523792F5200F6A09F /* SearchResultsTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SearchResultsTableViewCell.xib; sourceTree = "<group>"; };
+		52B73998237A224100F6A09F /* CacheLRU.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CacheLRU.swift; sourceTree = "<group>"; };
+		52B7399A237A51C100F6A09F /* MainCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainCollectionViewCell.swift; sourceTree = "<group>"; };
+		52B7399B237A51C100F6A09F /* MainCollectionViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MainCollectionViewCell.xib; sourceTree = "<group>"; };
 		72F8B1100C8A117E155E9091 /* Pods-RecordWarp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RecordWarp.debug.xcconfig"; path = "Pods/Target Support Files/Pods-RecordWarp/Pods-RecordWarp.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -146,6 +152,7 @@
 			children = (
 				52B7398B2377648300F6A09F /* StreamingPlayerManager.swift */,
 				52B7398E2377BF8100F6A09F /* Throttler.swift */,
+				52B73998237A224100F6A09F /* CacheLRU.swift */,
 			);
 			path = Util;
 			sourceTree = "<group>";
@@ -163,6 +170,8 @@
 			children = (
 				52B7399423792F5200F6A09F /* SearchResultsTableViewCell.swift */,
 				52B7399523792F5200F6A09F /* SearchResultsTableViewCell.xib */,
+				52B7399A237A51C100F6A09F /* MainCollectionViewCell.swift */,
+				52B7399B237A51C100F6A09F /* MainCollectionViewCell.xib */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -241,6 +250,7 @@
 				52B7399723792F5200F6A09F /* SearchResultsTableViewCell.xib in Resources */,
 				529D20D4211D3AC50016E849 /* GoogleService-Info.plist in Resources */,
 				520A18CF211A50AF001E30F7 /* Main.storyboard in Resources */,
+				52B7399D237A51C100F6A09F /* MainCollectionViewCell.xib in Resources */,
 				529D20D0211C872A0016E849 /* PlaylistTableViewCell.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -300,7 +310,9 @@
 				520A18CC211A50AF001E30F7 /* ViewController.swift in Sources */,
 				520A18CA211A50AF001E30F7 /* AppDelegate.swift in Sources */,
 				52B7398F2377BF8100F6A09F /* Throttler.swift in Sources */,
+				52B7399C237A51C100F6A09F /* MainCollectionViewCell.swift in Sources */,
 				520A18E8211A893A001E30F7 /* ResultsTableViewController.swift in Sources */,
+				52B73999237A224100F6A09F /* CacheLRU.swift in Sources */,
 				52B7399623792F5200F6A09F /* SearchResultsTableViewCell.swift in Sources */,
 				52B7398C2377648300F6A09F /* StreamingPlayerManager.swift in Sources */,
 				529D20CF211C872A0016E849 /* PlaylistTableViewCell.swift in Sources */,

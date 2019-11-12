@@ -18,6 +18,7 @@ class ViewController: UIViewController {
     var webLoginUrl: URL?
     var appLoginUrl: URL?
     
+    @IBOutlet weak var collection: UICollectionView!
     // can always improve the search function later
     
     @IBAction func tapLogin(_ sender: Any) {
@@ -89,6 +90,13 @@ class ViewController: UIViewController {
         // Do any additional setup after loading the view, typically from a nib.
         setup()
         NotificationCenter.default.addObserver(self, selector: #selector(ViewController.updateAfterFirstLogin), name: Notification.Name(rawValue: "loginSuccessfull"), object: nil)
+        
+        //setup collection view
+        self.collection.register(UINib(nibName: "MainCollectionViewCell", bundle: Bundle.main), forCellWithReuseIdentifier: "collectionCell")
+        collection.delegate = self
+        //collection.collectionViewLayout = CollectionViewLa
+        
+        collection.reloadData()
     }
     
     @objc func updateAfterFirstLogin() {
@@ -130,3 +138,24 @@ extension ViewController : SPTAudioStreamingPlaybackDelegate{
     
 }
 
+//I think it didnt work because I didnt add the extension for the delegate at the same time
+extension ViewController : UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return 5
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+       return collectionView.dequeueReusableCell(withReuseIdentifier: "collectionCell", for: indexPath)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        let size = CGSize(width: ((collectionView.frame.width-8)/3), height: ((collectionView.frame.width-8)/3))
+        return size
+    }
+}
+//extension ViewController:  {
+//    private func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+//        let size = CGSize(width: ((collectionView.frame.width-8)/3), height: ((collectionView.frame.width-8)/3))
+//        return size
+//    }
+//}

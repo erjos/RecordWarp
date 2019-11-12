@@ -48,13 +48,34 @@
                                     <segue destination="8SH-Ed-gkm" kind="show" id="ij9-yr-fZP"/>
                                 </connections>
                             </button>
+                            <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="Ugs-L9-wVp">
+                                <rect key="frame" x="0.0" y="44" width="375" height="200"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="200" id="GGw-bX-KIv"/>
+                                </constraints>
+                                <collectionViewFlowLayout key="collectionViewLayout" scrollDirection="horizontal" minimumLineSpacing="10" minimumInteritemSpacing="10" id="8SO-Ib-x5v">
+                                    <size key="itemSize" width="50" height="50"/>
+                                    <size key="headerReferenceSize" width="0.0" height="0.0"/>
+                                    <size key="footerReferenceSize" width="0.0" height="0.0"/>
+                                    <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                </collectionViewFlowLayout>
+                                <cells/>
+                                <connections>
+                                    <outlet property="dataSource" destination="BYZ-38-t0r" id="N45-B3-GLO"/>
+                                    <outlet property="delegate" destination="BYZ-38-t0r" id="36g-KN-L1d"/>
+                                </connections>
+                            </collectionView>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="zIH-Nk-KVD" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="E5J-KH-FuU"/>
                             <constraint firstItem="yE2-Nl-7Ai" firstAttribute="top" secondItem="zIH-Nk-KVD" secondAttribute="bottom" constant="8" id="EMD-cO-YlG"/>
+                            <constraint firstItem="Ugs-L9-wVp" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="Yxs-Ad-f4b"/>
+                            <constraint firstItem="Ugs-L9-wVp" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="b79-f0-QpE"/>
                             <constraint firstItem="15Z-6Y-Eui" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="bCx-Lz-6K5"/>
                             <constraint firstItem="CNd-7q-KtD" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="dNH-fZ-fY2"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="Ugs-L9-wVp" secondAttribute="trailing" id="ieD-Qf-S9w"/>
                             <constraint firstItem="15Z-6Y-Eui" firstAttribute="top" secondItem="yE2-Nl-7Ai" secondAttribute="bottom" constant="30" id="mHo-dZ-MY3"/>
                             <constraint firstItem="CNd-7q-KtD" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="n58-g1-js7"/>
                             <constraint firstItem="zIH-Nk-KVD" firstAttribute="top" secondItem="CNd-7q-KtD" secondAttribute="bottom" constant="36" id="nkH-HU-nvA"/>
@@ -64,6 +85,7 @@
                     </view>
                     <navigationItem key="navigationItem" id="ThF-Lo-Dsk"/>
                     <connections>
+                        <outlet property="collection" destination="Ugs-L9-wVp" id="Asn-OT-kLT"/>
                         <outlet property="searchField" destination="zIH-Nk-KVD" id="Zg7-WB-mxn"/>
                         <segue destination="9d4-lg-AZd" kind="show" identifier="showResults" id="swm-rN-k9x"/>
                     </connections>
