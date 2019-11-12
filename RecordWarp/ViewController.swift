@@ -97,6 +97,7 @@ class ViewController: UIViewController {
         collection.reloadData()
         collection.dragDelegate = self
         collection.dropDelegate = self
+        collection.dragInteractionEnabled = true
     }
     
     @objc func updateAfterFirstLogin() {
