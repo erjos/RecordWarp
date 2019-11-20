@@ -18,6 +18,7 @@
 		520A18E4211A55CF001E30F7 /* BridgeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 520A18E3211A55CF001E30F7 /* BridgeViewController.m */; };
 		520A18E6211A57EC001E30F7 /* Keys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 520A18E5211A57EC001E30F7 /* Keys.swift */; };
 		520A18E8211A893A001E30F7 /* ResultsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 520A18E7211A893A001E30F7 /* ResultsTableViewController.swift */; };
+		5250271D237B704B009AA780 /* AnimateTestViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5250271C237B704B009AA780 /* AnimateTestViewController.swift */; };
 		529D20CF211C872A0016E849 /* PlaylistTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529D20CD211C872A0016E849 /* PlaylistTableViewCell.swift */; };
 		529D20D0211C872A0016E849 /* PlaylistTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 529D20CE211C872A0016E849 /* PlaylistTableViewCell.xib */; };
 		529D20D2211CFBE40016E849 /* PlaylistViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529D20D1211CFBE40016E849 /* PlaylistViewController.swift */; };
@@ -52,6 +53,7 @@
 		520A18E3211A55CF001E30F7 /* BridgeViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BridgeViewController.m; sourceTree = "<group>"; };
 		520A18E5211A57EC001E30F7 /* Keys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Keys.swift; sourceTree = "<group>"; };
 		520A18E7211A893A001E30F7 /* ResultsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultsTableViewController.swift; sourceTree = "<group>"; };
+		5250271C237B704B009AA780 /* AnimateTestViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimateTestViewController.swift; sourceTree = "<group>"; };
 		529D20CD211C872A0016E849 /* PlaylistTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaylistTableViewCell.swift; sourceTree = "<group>"; };
 		529D20CE211C872A0016E849 /* PlaylistTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PlaylistTableViewCell.xib; sourceTree = "<group>"; };
 		529D20D1211CFBE40016E849 /* PlaylistViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaylistViewController.swift; sourceTree = "<group>"; };
@@ -172,6 +174,7 @@
 				52B7399523792F5200F6A09F /* SearchResultsTableViewCell.xib */,
 				52B7399A237A51C100F6A09F /* MainCollectionViewCell.swift */,
 				52B7399B237A51C100F6A09F /* MainCollectionViewCell.xib */,
+				5250271C237B704B009AA780 /* AnimateTestViewController.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -306,6 +309,7 @@
 				520A18E4211A55CF001E30F7 /* BridgeViewController.m in Sources */,
 				520A18E6211A57EC001E30F7 /* Keys.swift in Sources */,
 				529D20D2211CFBE40016E849 /* PlaylistViewController.swift in Sources */,
+				5250271D237B704B009AA780 /* AnimateTestViewController.swift in Sources */,
 				52B7398A2377544800F6A09F /* SpotifyInteractor.swift in Sources */,
 				520A18CC211A50AF001E30F7 /* ViewController.swift in Sources */,
 				520A18CA211A50AF001E30F7 /* AppDelegate.swift in Sources */,

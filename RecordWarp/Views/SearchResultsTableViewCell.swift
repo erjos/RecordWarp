@@ -23,6 +23,13 @@ class SearchResultsTableViewCell: UITableViewCell {
     @IBAction func addSong(_ sender: Any) {
     }
     
+    func resetCell() {
+        self.albumImage.image = UIImage(named: "disc_icon")
+        self.contentName.text = ""
+        self.additionalInfo.text = ""
+        self.infoTwo.text = ""
+    }
+    
     func setCellImage(_ image: UIImage) {
         self.albumImage.image = image
         

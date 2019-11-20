@@ -8,7 +8,6 @@
 
 import UIKit
 
-//should maybe at a cache to ensure we're not fetching the same image from url if it exists
 class ResultsTableViewController: UITableViewController {
     
     var player: SPTAudioStreamingController?
@@ -86,18 +85,25 @@ class ResultsTableViewController: UITableViewController {
             fatalError("Did not create cell")
         }
         
+        cell.resetCell()
+        
         guard let results = viewModel.results else { return cell }
         
         if isFiltering() {
             let track = viewModel.filteredTracks[indexPath.row]
             cell.setCellForTrack(track)
         } else {
-            let track = results[indexPath.row]
-            cell.setCellForTrack(track)
-            self.viewModel.getImageForTrack(track: track) { (albumImage) in
-                
-                DispatchQueue.main.async {
-                    cell.setCellImage(albumImage)
+            //CRASHED HERE - index out of range - I think i just fixed it
+            if indexPath.row < results.count {
+                let track = results[indexPath.row]
+                cell.setCellForTrack(track)
+                self.viewModel.getImageForTrack(track: track) { (albumImage) in
+                    
+                    DispatchQueue.main.async {
+                        if let updateCell = tableView.cellForRow(at: indexPath) as? SearchResultsTableViewCell {
+                            updateCell.setCellImage(albumImage)
+                        }
+                    }
                 }
             }
         }
