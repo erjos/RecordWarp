@@ -14,6 +14,12 @@ import UIKit
 
 //load only the search for the active category to begin, but consider loading all three
 
+fileprivate enum SearchScope: String {
+    case Tracks = "Tracks"
+    case Artists = "Artists"
+    case Albums = "Albums"
+}
+
 class ResultsTableViewController: UITableViewController {
     
     var player: SPTAudioStreamingController?
@@ -56,7 +62,7 @@ class ResultsTableViewController: UITableViewController {
         searchController.searchResultsUpdater = self
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.searchBar.placeholder = "Search for Songs, Albums or Artists"
-        searchController.searchBar.scopeButtonTitles = ["Tracks", "Artists", "Albums"]
+        searchController.searchBar.scopeButtonTitles = [SearchScope.Tracks.rawValue, SearchScope.Artists.rawValue, SearchScope.Albums.rawValue]
         searchController.searchBar.showsScopeBar = true
         searchController.searchBar.delegate = self
         navigationItem.searchController = searchController
@@ -74,7 +80,7 @@ class ResultsTableViewController: UITableViewController {
     }
     
     //TODO: move this search function to a different class
-    func search(text: String) {
+    func search(text: String, queryType: SPTSearchQueryType) {
         //not sure how well this session manager func will work
         guard let session = SessionManager.getCurrentSession() else {
             return
@@ -82,7 +88,7 @@ class ResultsTableViewController: UITableViewController {
         
         if(session.isValid()) {
             //TODO: move this method to interactor layer
-            SPTSearch.perform(withQuery: text, queryType: .queryTypeTrack, accessToken: session.accessToken) { (error, list) in
+            SPTSearch.perform(withQuery: text, queryType: queryType, accessToken: session.accessToken) { (error, list) in
                 let listPage = list as! SPTListPage
                 
                 self.viewModel.currentListPage = listPage
@@ -149,7 +155,30 @@ private extension ResultsTableViewController {
         let indexPathsForVisibleRows = tableView.indexPathsForVisibleRows ?? []
         let indexPathsIntersection = Set(indexPathsForVisibleRows).intersection(indexPaths)
         return Array(indexPathsIntersection)
-  }
+        
+    }
+    
+    //Maps scope to query type
+    func getQueryType() -> SPTSearchQueryType {
+        let searchBar = self.searchController.searchBar
+        let currentScopeIndex = searchBar.selectedScopeButtonIndex
+        guard let scopes = searchBar.scopeButtonTitles else { return .queryTypeTrack }
+        
+        let currentScope = scopes[currentScopeIndex]
+        
+        switch currentScope {
+        case SearchScope.Tracks.rawValue:
+            return .queryTypeTrack
+        case SearchScope.Artists.rawValue:
+            return .queryTypeArtist
+        case SearchScope.Albums.rawValue:
+            return .queryTypeAlbum
+        default:
+            return .queryTypeTrack
+        }
+    }
+    
+    
 }
 
 //Used to create infinite scroll
@@ -186,7 +215,10 @@ extension ResultsTableViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
         throttler.throttle {
             DispatchQueue.main.async {
-                self.search(text: searchController.searchBar.text!)
+                
+                //get the current scope - then map that current scope to the correct query type - then pass that query type in here
+                
+                self.search(text: searchController.searchBar.text!, queryType: self.getQueryType())
             }
         }
     }
@@ -194,6 +226,6 @@ extension ResultsTableViewController: UISearchResultsUpdating {
 
 extension ResultsTableViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, selectedScopeButtonIndexDidChange selectedScope: Int) {
-        filterContentForSearchText(searchBar.text!, scope: searchBar.scopeButtonTitles![selectedScope])
+        self.search(text: searchBar.text!, queryType: self.getQueryType())
     }
 }
