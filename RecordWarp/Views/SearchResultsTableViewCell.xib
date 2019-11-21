@@ -44,6 +44,9 @@
                     </label>
                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="IjK-Eb-ecg">
                         <rect key="frame" x="371" y="8" width="33" height="34"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="33" id="YFn-u2-7Da"/>
+                        </constraints>
                         <state key="normal" title="Add">
                             <color key="titleColor" cocoaTouchSystemColor="darkTextColor"/>
                         </state>

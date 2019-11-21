@@ -8,7 +8,9 @@
 
 import Foundation
 
-//I think that we only want to have functions on the interactor for now, but what if the functions need knowledge of the view model so that the function can change to accomodate it?
+// implement feature to pause and resume downloads depending on whether the user still requires that content at the time
+// implement feature to store the resume data object if the download fails
+// consider what you could do to create this as a framework potentially
 
 class SpotifyInteractor: SpotifyProtocol {
     

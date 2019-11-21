@@ -8,6 +8,12 @@
 
 import UIKit
 
+//maybe instead of filtering our list we actually want to use the throttler to determine when to submit the search to spotify.
+//we could have three tabs available - when you select an artist or an album you are taken to a list of tracks that correspond to them
+//The add button is only visible for tracks for the time being
+
+//load only the search for the active category to begin, but consider loading all three
+
 class ResultsTableViewController: UITableViewController {
     
     var player: SPTAudioStreamingController?
@@ -20,7 +26,8 @@ class ResultsTableViewController: UITableViewController {
         return searchController.searchBar.text?.isEmpty ?? true
     }
     
-    func filterContentForSearchText(_ searchText: String, scope: String = "All") {
+    func filterContentForSearchText(_ searchText: String, scope: String = "Tracks") {
+        //modify this method to update the search via spotify rather than filter the results we have here
         viewModel.filterContentForSearchText(searchText, scope: scope)
         self.tableView.reloadData()
     }
@@ -31,11 +38,12 @@ class ResultsTableViewController: UITableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        //setup search
         searchController.searchResultsUpdater = self
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.searchBar.placeholder = "Search for Songs, Albums or Artists"
-        searchController.searchBar.scopeButtonTitles = ["All", "Tracks", "Artists", "Albums"]
-            
+        searchController.searchBar.scopeButtonTitles = ["Tracks", "Artists", "Albums"]
+        searchController.searchBar.showsScopeBar = true
         searchController.searchBar.delegate = self
         navigationItem.searchController = searchController
         navigationItem.hidesSearchBarWhenScrolling = false
@@ -137,14 +145,14 @@ private extension ResultsTableViewController {
     }
 
     //calculates the visible cells that should be reloaded when you update the data source
-  func visibleIndexPathsToReload(intersecting indexPaths: [IndexPath]) -> [IndexPath] {
-    let indexPathsForVisibleRows = tableView.indexPathsForVisibleRows ?? []
-    let indexPathsIntersection = Set(indexPathsForVisibleRows).intersection(indexPaths)
-    return Array(indexPathsIntersection)
+    func visibleIndexPathsToReload(intersecting indexPaths: [IndexPath]) -> [IndexPath] {
+        let indexPathsForVisibleRows = tableView.indexPathsForVisibleRows ?? []
+        let indexPathsIntersection = Set(indexPathsForVisibleRows).intersection(indexPaths)
+        return Array(indexPathsIntersection)
   }
 }
 
-
+//Used to create infinite scroll
 extension ResultsTableViewController: UITableViewDataSourcePrefetching {
     func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
         
@@ -173,6 +181,7 @@ extension ResultsTableViewController: UITableViewDataSourcePrefetching {
     }
 }
 
+//used to update search results based on user input - need to modify how this work to acutally run the search on this page
 extension ResultsTableViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
         throttler.throttle {

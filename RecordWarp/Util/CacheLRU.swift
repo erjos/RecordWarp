@@ -8,6 +8,8 @@
 
 import Foundation
 
+//finsih implementing this LRU 
+//also create a class responsible for accessing the library/cache directory and store images there - then maybe run something that deletes images in there that haven't been used in a recent amount of time
 class CacheLRU {
     
 }

@@ -51,7 +51,7 @@
 		520A18E1211A55CF001E30F7 /* RecordWarp-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "RecordWarp-Bridging-Header.h"; sourceTree = "<group>"; };
 		520A18E2211A55CF001E30F7 /* BridgeViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BridgeViewController.h; sourceTree = "<group>"; };
 		520A18E3211A55CF001E30F7 /* BridgeViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BridgeViewController.m; sourceTree = "<group>"; };
-		520A18E5211A57EC001E30F7 /* Keys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Keys.swift; sourceTree = "<group>"; };
+		520A18E5211A57EC001E30F7 /* Keys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Keys.swift; path = ../Keys.swift; sourceTree = "<group>"; };
 		520A18E7211A893A001E30F7 /* ResultsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultsTableViewController.swift; sourceTree = "<group>"; };
 		5250271C237B704B009AA780 /* AnimateTestViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimateTestViewController.swift; sourceTree = "<group>"; };
 		529D20CD211C872A0016E849 /* PlaylistTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaylistTableViewCell.swift; sourceTree = "<group>"; };
@@ -115,30 +115,36 @@
 		520A18C8211A50AF001E30F7 /* RecordWarp */ = {
 			isa = PBXGroup;
 			children = (
+				527136A523865A9C00A0A99B /* ViewControllers */,
 				52B7399323792F2500F6A09F /* Views */,
 				52B739902379245D00F6A09F /* Models */,
 				52B7398D2377BF7200F6A09F /* Util */,
 				52B739882377543200F6A09F /* Interactors */,
 				520A18C9211A50AF001E30F7 /* AppDelegate.swift */,
-				520A18CB211A50AF001E30F7 /* ViewController.swift */,
-				520A18E7211A893A001E30F7 /* ResultsTableViewController.swift */,
 				520A18CD211A50AF001E30F7 /* Main.storyboard */,
-				520A18D0211A50B1001E30F7 /* Assets.xcassets */,
 				520A18D2211A50B1001E30F7 /* LaunchScreen.storyboard */,
+				520A18D0211A50B1001E30F7 /* Assets.xcassets */,
 				520A18D5211A50B1001E30F7 /* Info.plist */,
-				520A18DB211A54ED001E30F7 /* SpotifyAudioPlayback.framework */,
-				520A18DC211A54ED001E30F7 /* SpotifyAuthentication.framework */,
-				520A18DD211A54ED001E30F7 /* SpotifyMetadata.framework */,
+				529D20D3211D3AC50016E849 /* GoogleService-Info.plist */,
 				520A18E2211A55CF001E30F7 /* BridgeViewController.h */,
 				520A18E3211A55CF001E30F7 /* BridgeViewController.m */,
 				520A18E1211A55CF001E30F7 /* RecordWarp-Bridging-Header.h */,
-				520A18E5211A57EC001E30F7 /* Keys.swift */,
-				529D20CD211C872A0016E849 /* PlaylistTableViewCell.swift */,
-				529D20CE211C872A0016E849 /* PlaylistTableViewCell.xib */,
-				529D20D1211CFBE40016E849 /* PlaylistViewController.swift */,
-				529D20D3211D3AC50016E849 /* GoogleService-Info.plist */,
+				520A18DB211A54ED001E30F7 /* SpotifyAudioPlayback.framework */,
+				520A18DC211A54ED001E30F7 /* SpotifyAuthentication.framework */,
+				520A18DD211A54ED001E30F7 /* SpotifyMetadata.framework */,
 			);
 			path = RecordWarp;
+			sourceTree = "<group>";
+		};
+		527136A523865A9C00A0A99B /* ViewControllers */ = {
+			isa = PBXGroup;
+			children = (
+				529D20D1211CFBE40016E849 /* PlaylistViewController.swift */,
+				520A18CB211A50AF001E30F7 /* ViewController.swift */,
+				520A18E7211A893A001E30F7 /* ResultsTableViewController.swift */,
+				5250271C237B704B009AA780 /* AnimateTestViewController.swift */,
+			);
+			path = ViewControllers;
 			sourceTree = "<group>";
 		};
 		52B739882377543200F6A09F /* Interactors */ = {
@@ -152,6 +158,7 @@
 		52B7398D2377BF7200F6A09F /* Util */ = {
 			isa = PBXGroup;
 			children = (
+				520A18E5211A57EC001E30F7 /* Keys.swift */,
 				52B7398B2377648300F6A09F /* StreamingPlayerManager.swift */,
 				52B7398E2377BF8100F6A09F /* Throttler.swift */,
 				52B73998237A224100F6A09F /* CacheLRU.swift */,
@@ -174,7 +181,8 @@
 				52B7399523792F5200F6A09F /* SearchResultsTableViewCell.xib */,
 				52B7399A237A51C100F6A09F /* MainCollectionViewCell.swift */,
 				52B7399B237A51C100F6A09F /* MainCollectionViewCell.xib */,
-				5250271C237B704B009AA780 /* AnimateTestViewController.swift */,
+				529D20CD211C872A0016E849 /* PlaylistTableViewCell.swift */,
+				529D20CE211C872A0016E849 /* PlaylistTableViewCell.xib */,
 			);
 			path = Views;
 			sourceTree = "<group>";
