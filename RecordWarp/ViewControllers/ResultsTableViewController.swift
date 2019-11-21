@@ -32,13 +32,27 @@ class ResultsTableViewController: UITableViewController {
         self.tableView.reloadData()
     }
     
-    func isFiltering() -> Bool {
-        return searchController.isActive && !searchBarIsEmpty()
-    }
+//    func isFiltering() -> Bool {
+//        return searchController.isActive && !searchBarIsEmpty()
+//    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        //setup search
+        setupSearchController()
+        self.viewModel.results = viewModel.currentListPage?.items as? [SPTPartialTrack]
+        
+        // Uncomment the following line to preserve selection between presentations
+        // self.clearsSelectionOnViewWillAppear = false
+
+        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
+        // self.navigationItem.rightBarButtonItem = self.editButtonItem
+        
+        self.tableView.register(UINib(nibName: "SearchResultsTableViewCell", bundle: Bundle.main), forCellReuseIdentifier: "resultCell")
+        self.tableView.prefetchDataSource = self
+        self.navigationController?.navigationBar.prefersLargeTitles = true
+    }
+    
+    private func setupSearchController() {
         searchController.searchResultsUpdater = self
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.searchBar.placeholder = "Search for Songs, Albums or Artists"
@@ -48,22 +62,6 @@ class ResultsTableViewController: UITableViewController {
         navigationItem.searchController = searchController
         navigationItem.hidesSearchBarWhenScrolling = false
         definesPresentationContext = true
-        
-        //set the results from the listpage we passed in
-        self.viewModel.results = viewModel.currentListPage?.items as? [SPTPartialTrack]
-        
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem
-        
-        //self.tableView.register(UITableViewCell.self, forCellReuseIdentifier: "reuseIdentifier")
-        
-        self.tableView.register(UINib(nibName: "SearchResultsTableViewCell", bundle: Bundle.main), forCellReuseIdentifier: "resultCell")
-        self.tableView.prefetchDataSource = self
-        
-        self.navigationController?.navigationBar.prefersLargeTitles = true
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -74,6 +72,25 @@ class ResultsTableViewController: UITableViewController {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
+    
+    //TODO: move this search function to a different class
+    func search(text: String) {
+        //not sure how well this session manager func will work
+        guard let session = SessionManager.getCurrentSession() else {
+            return
+        }
+        
+        if(session.isValid()) {
+            //TODO: move this method to interactor layer
+            SPTSearch.perform(withQuery: text, queryType: .queryTypeTrack, accessToken: session.accessToken) { (error, list) in
+                let listPage = list as! SPTListPage
+                
+                self.viewModel.currentListPage = listPage
+                self.viewModel.results = self.viewModel.currentListPage?.items as? [SPTPartialTrack]
+                self.tableView.reloadData()
+            }
+        }
+    }
 
     // MARK: - Table view data source
 
@@ -82,9 +99,6 @@ class ResultsTableViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if isFiltering() {
-            return viewModel.filteredTracks.count
-        }
         return viewModel.totalCount
     }
 
@@ -96,46 +110,32 @@ class ResultsTableViewController: UITableViewController {
         cell.resetCell()
         
         guard let results = viewModel.results else { return cell }
-        
-        if isFiltering() {
-            let track = viewModel.filteredTracks[indexPath.row]
+        //CRASHED HERE - index out of range - I think i just fixed it
+        if indexPath.row < results.count {
+            let track = results[indexPath.row]
             cell.setCellForTrack(track)
-        } else {
-            //CRASHED HERE - index out of range - I think i just fixed it
-            if indexPath.row < results.count {
-                let track = results[indexPath.row]
-                cell.setCellForTrack(track)
-                self.viewModel.getImageForTrack(track: track) { (albumImage) in
+            self.viewModel.getImageForTrack(track: track) { (albumImage) in
                     
-                    DispatchQueue.main.async {
-                        if let updateCell = tableView.cellForRow(at: indexPath) as? SearchResultsTableViewCell {
-                            updateCell.setCellImage(albumImage)
-                        }
+                DispatchQueue.main.async {
+                    if let updateCell = tableView.cellForRow(at: indexPath) as? SearchResultsTableViewCell {
+                        updateCell.setCellImage(albumImage)
                     }
                 }
             }
         }
+        
         return cell
     }
 
     //Right now this just plays the song
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         var track: SPTPartialTrack!
-        if isFiltering(){
-            track = viewModel.filteredTracks[indexPath.row]
+        track = viewModel.results?[indexPath.row]
             
-            SPTAudioStreamingController.sharedInstance()?.playSpotifyURI(track?.uri.absoluteString, startingWith: 0, startingWithPosition: 0, callback: { (err) in
-                //
-            })
-        } else {
-            track = viewModel.results?[indexPath.row]
+        SPTAudioStreamingController.sharedInstance()?.playSpotifyURI(track?.uri.absoluteString, startingWith: 0, startingWithPosition: 0, callback: { (err) in
             
-            SPTAudioStreamingController.sharedInstance()?.playSpotifyURI(track?.uri.absoluteString, startingWith: 0, startingWithPosition: 0, callback: { (err) in
-                //
-            })
-        }
+        })
     }
-    
 }
 
 private extension ResultsTableViewController {
@@ -186,7 +186,7 @@ extension ResultsTableViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
         throttler.throttle {
             DispatchQueue.main.async {
-                self.filterContentForSearchText(searchController.searchBar.text!)
+                self.search(text: searchController.searchBar.text!)
             }
         }
     }

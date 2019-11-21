@@ -63,6 +63,7 @@ class ViewController: UIViewController {
         }
     }
     
+    //TODO: make getting the session more accessible
     func setup() {
         SPTAuth.defaultInstance().clientID = Keys.clientID
         SPTAuth.defaultInstance().redirectURL = URL(string: Keys.redirectURL)
