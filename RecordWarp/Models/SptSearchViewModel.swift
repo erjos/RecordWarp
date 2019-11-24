@@ -9,11 +9,15 @@ import Foundation
 
 class SptSearchViewModel {
     
-    var results:[SPTPartialTrack]?
+    //var results:[SPTPartialTrack]?
+    
+    //three result possibilities depending on what we want to display
+    var trackResults:[SPTPartialTrack]?
+    var albumResults:[SPTPartialAlbum]?
+    var artistResults:[SPTArtist]?
+    
+    //used to page results from the service, the items in the list page will change depending on how we query the search
     var currentListPage:SPTListPage?
-    //Might use these later to help with filtering
-    var filteredAlbums = [SPTPartialAlbum]()
-    var filteredArtists = [SPTPartialArtist]()
     
     //TODO: filtering doesn't work right now
     var filteredTracks  = [SPTPartialTrack]()
@@ -26,6 +30,10 @@ class SptSearchViewModel {
             return 0
         }
         return (Int(count) > 3000) ? 3000 : Int(count)
+    }
+    
+    //might need the full artist object to get this
+    func getImageForArtist(artist: SPTPartialArtist, callback: @escaping (UIImage)->()) {
     }
     
     func getImageForTrack(track: SPTPartialTrack, callback: @escaping (UIImage)->()) {
@@ -61,7 +69,7 @@ class SptSearchViewModel {
     
     //** returns index paths of new tracks that we are adding to the data source
     private func calculateIndexPathsToReload(from newTracks: [SPTPartialTrack]) -> [IndexPath] {
-        let startIndex = results!.count - newTracks.count
+        let startIndex = trackResults!.count - newTracks.count
         let endIndex = startIndex + newTracks.count
         return (startIndex..<endIndex).map { IndexPath(row: $0, section: 0) }
     }
@@ -70,7 +78,7 @@ class SptSearchViewModel {
     func filterContentForSearchText(_ searchText: String, scope: String = "All") {
     
         //TODO: take scope into account to switch between tracks,albums and artists
-        guard let tracks = results else {
+        guard let tracks = trackResults else {
             return
         }
     
@@ -85,7 +93,7 @@ class SptSearchViewModel {
             return []
         }
         //update data source
-        self.results?.append(contentsOf: newTracks)
+        self.trackResults?.append(contentsOf: newTracks)
         //uodate current listPage
         self.currentListPage = listPage
         //calculate indexPath to update

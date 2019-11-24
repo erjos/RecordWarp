@@ -5,14 +5,9 @@
 //  Created by Ethan Joseph on 8/7/18.
 //  Copyright © 2018 Ethan Joseph. All rights reserved.
 //
-
 import UIKit
 
-//maybe instead of filtering our list we actually want to use the throttler to determine when to submit the search to spotify.
-//we could have three tabs available - when you select an artist or an album you are taken to a list of tracks that correspond to them
-//The add button is only visible for tracks for the time being
-
-//load only the search for the active category to begin, but consider loading all three
+//load only the search for the active category to begin, but consider loading all three to improve perfomance maybe
 
 fileprivate enum SearchScope: String {
     case Tracks = "Tracks"
@@ -20,12 +15,17 @@ fileprivate enum SearchScope: String {
     case Albums = "Albums"
 }
 
+//Handle deletion events - what happens to the current query? Do we want to execute searches every 5 seconds if the text changes
+//What do we do when the search goes back to empty? We want to maintain our current search results until the user decides to start typing again
+
 class ResultsTableViewController: UITableViewController {
     
     var player: SPTAudioStreamingController?
     var viewModel = SptSearchViewModel()
     lazy var spotifyInteractor: SpotifyProtocol = SpotifyInteractor()
+    //TODO: consider decreasing the tiime here
     var throttler = Throttler(seconds: 5.3)
+    
     let searchController = UISearchController(searchResultsController: nil)
     
     func searchBarIsEmpty() -> Bool {
@@ -45,7 +45,8 @@ class ResultsTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupSearchController()
-        self.viewModel.results = viewModel.currentListPage?.items as? [SPTPartialTrack]
+        
+        self.viewModel.trackResults = viewModel.currentListPage?.items as? [SPTPartialTrack]
         
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
@@ -92,7 +93,16 @@ class ResultsTableViewController: UITableViewController {
                 let listPage = list as! SPTListPage
                 
                 self.viewModel.currentListPage = listPage
-                self.viewModel.results = self.viewModel.currentListPage?.items as? [SPTPartialTrack]
+                
+                //TODO - create 3 results lists on the vm and then one main results - we switch between the two based on scope
+                if queryType == .queryTypeTrack {
+                    self.viewModel.trackResults = self.viewModel.currentListPage?.items as? [SPTPartialTrack]
+                } else if queryType == .queryTypeArtist {
+                    self.viewModel.artistResults = self.viewModel.currentListPage?.items as? [SPTArtist]
+                } else if queryType == .queryTypeAlbum {
+                    self.viewModel.albumResults = self.viewModel.currentListPage?.items as? [SPTPartialAlbum]
+                }
+                
                 self.tableView.reloadData()
             }
         }
@@ -115,8 +125,8 @@ class ResultsTableViewController: UITableViewController {
         
         cell.resetCell()
         
-        guard let results = viewModel.results else { return cell }
-        //CRASHED HERE - index out of range - I think i just fixed it
+        //get different results depending on the selected scope
+        guard let results = viewModel.trackResults else { return cell }
         if indexPath.row < results.count {
             let track = results[indexPath.row]
             cell.setCellForTrack(track)
@@ -136,7 +146,7 @@ class ResultsTableViewController: UITableViewController {
     //Right now this just plays the song
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         var track: SPTPartialTrack!
-        track = viewModel.results?[indexPath.row]
+        track = viewModel.trackResults?[indexPath.row]
             
         SPTAudioStreamingController.sharedInstance()?.playSpotifyURI(track?.uri.absoluteString, startingWith: 0, startingWithPosition: 0, callback: { (err) in
             
@@ -147,7 +157,7 @@ class ResultsTableViewController: UITableViewController {
 private extension ResultsTableViewController {
 
     func isLoadingCell(for indexPath: IndexPath) -> Bool {
-        return indexPath.row >= viewModel.results?.count ?? 0
+        return indexPath.row >= viewModel.trackResults?.count ?? 0
     }
 
     //calculates the visible cells that should be reloaded when you update the data source
@@ -155,30 +165,28 @@ private extension ResultsTableViewController {
         let indexPathsForVisibleRows = tableView.indexPathsForVisibleRows ?? []
         let indexPathsIntersection = Set(indexPathsForVisibleRows).intersection(indexPaths)
         return Array(indexPathsIntersection)
-        
     }
     
-    //Maps scope to query type
-    func getQueryType() -> SPTSearchQueryType {
+    //keep this here, it gets data from the view
+    private func getCurrentScope() -> SearchScope {
         let searchBar = self.searchController.searchBar
         let currentScopeIndex = searchBar.selectedScopeButtonIndex
-        guard let scopes = searchBar.scopeButtonTitles else { return .queryTypeTrack }
-        
-        let currentScope = scopes[currentScopeIndex]
-        
-        switch currentScope {
-        case SearchScope.Tracks.rawValue:
-            return .queryTypeTrack
-        case SearchScope.Artists.rawValue:
-            return .queryTypeArtist
-        case SearchScope.Albums.rawValue:
-            return .queryTypeAlbum
-        default:
-            return .queryTypeTrack
-        }
+        guard let scopes = searchBar.scopeButtonTitles else { return .Tracks }
+        let currentScopeString = scopes[currentScopeIndex]
+        return SearchScope(rawValue: currentScopeString) ?? .Tracks
     }
     
-    
+    //This can probably be moved to another class
+    func getQueryType(from scope: SearchScope) -> SPTSearchQueryType {
+        switch scope {
+        case .Tracks:
+            return .queryTypeTrack
+        case .Artists:
+            return .queryTypeArtist
+        case .Albums:
+            return .queryTypeAlbum
+        }
+    }
 }
 
 //Used to create infinite scroll
@@ -213,12 +221,14 @@ extension ResultsTableViewController: UITableViewDataSourcePrefetching {
 //used to update search results based on user input - need to modify how this work to acutally run the search on this page
 extension ResultsTableViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
+        //guard against empty search?
         throttler.throttle {
             DispatchQueue.main.async {
-                
-                //get the current scope - then map that current scope to the correct query type - then pass that query type in here
-                
-                self.search(text: searchController.searchBar.text!, queryType: self.getQueryType())
+                guard let text = searchController.searchBar.text,
+                text != "" else { return }
+                let scope = self.getCurrentScope()
+                let query = self.getQueryType(from: scope)
+                self.search(text: text, queryType: query)
             }
         }
     }
@@ -226,6 +236,8 @@ extension ResultsTableViewController: UISearchResultsUpdating {
 
 extension ResultsTableViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, selectedScopeButtonIndexDidChange selectedScope: Int) {
-        self.search(text: searchBar.text!, queryType: self.getQueryType())
+        let scope = getCurrentScope()
+        let query = getQueryType(from: scope)
+        self.search(text: searchBar.text!, queryType: query)
     }
 }

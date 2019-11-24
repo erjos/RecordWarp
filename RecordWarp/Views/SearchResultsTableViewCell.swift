@@ -46,6 +46,14 @@ class SearchResultsTableViewCell: UITableViewCell {
         }
     }
     
+    func setCellForArtist(_ artist: SPTPartialArtist) {
+        self.contentName.text = artist.name
+    }
+    
+    func setCellForAlbum(_ album: SPTPartialAlbum) {
+        
+    }
+    
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
         // Configure the view for the selected state
