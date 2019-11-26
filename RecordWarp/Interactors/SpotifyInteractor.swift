@@ -120,16 +120,7 @@ class SpotifyInteractor: SpotifyProtocol {
             
             if let unwrapData = data { //let mimeType = httpResponse.mimeType, mimeType == "text/html",
                 
-                if let decoded = self.decodeJsonToObject(unwrapData) as? [String: Any] {
-                    //use SPTPartialAlbum
-                    let track = decoded["albums"] as? [String: Any]
-                    
-                    //use SPTPartialTrack
-                    let trackPage = decoded["tracks"] as? [String: Any]
-                    
-                    //use the codable models here maybe
-                    let artists = decoded["artists"] as? [String: Any]
-                }
+                let responseObject = self.decodeJson(unwrapData)
                 
             }
         }

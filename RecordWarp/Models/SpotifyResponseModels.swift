@@ -12,6 +12,19 @@ struct SearchResponseObject: Codable {
     var albums: AlbumPagingObject
     var artists: ArtistPagingObject
     var tracks: TrackPagingObject
+    
+    private enum CodingKeys: String, CodingKey {
+        case albums
+        case artists
+        case tracks
+    }
+    
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        albums = try container.decode(AlbumPagingObject.self, forKey: .albums)
+        artists = try container.decode(ArtistPagingObject.self, forKey: .artists)
+        tracks = try container.decode(TrackPagingObject.self, forKey: .tracks)
+    }
 }
 
 struct AlbumPagingObject: Codable {
@@ -72,9 +85,9 @@ struct ArtistPagingObject: Codable {
 }
 
 struct AlbumPartial: Codable {
-    var artists: [[String:String]]
+    var artists: [Artist]
     var id: String
-    var images: [[String:String]]
+    var images: [ImageObject]
     var name: String
     var total_tracks: Int
     
@@ -88,9 +101,9 @@ struct AlbumPartial: Codable {
     
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        artists = try container.decode([[String:String]].self, forKey: .artists)
+        artists = try container.decode([Artist].self, forKey: .artists)
         id = try container.decode(String.self, forKey: .id)
-        images = try container.decode([[String:String]].self, forKey: .images)
+        images = try container.decode([ImageObject].self, forKey: .images)
         name = try container.decode(String.self, forKey: .name)
         total_tracks = try container.decode(Int.self, forKey: .total_tracks)
     }
@@ -98,7 +111,7 @@ struct AlbumPartial: Codable {
 
 struct TrackPartial: Codable {
     var album: AlbumPartial
-    var artists: [[String:String]]
+    var artists: [Artist]
     var id: String
     var name: String
     var uri: String
@@ -114,7 +127,7 @@ struct TrackPartial: Codable {
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         album = try container.decode(AlbumPartial.self, forKey: .album)
-        artists = try container.decode([[String:String]].self, forKey: .artists)
+        artists = try container.decode([Artist].self, forKey: .artists)
         id = try container.decode(String.self, forKey: .id)
         name = try container.decode(String.self, forKey: .name)
         uri = try container.decode(String.self, forKey: .uri)
@@ -123,7 +136,7 @@ struct TrackPartial: Codable {
 
 struct Artist: Codable {
     var id: String
-    var images: [[String: String]]
+    var images: [ImageObject]?
     var name: String
     
     private enum CodingKeys: String, CodingKey {
@@ -135,7 +148,13 @@ struct Artist: Codable {
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         id = try container.decode(String.self, forKey: .id)
-        images = try container.decode([[String:String]].self, forKey: .images)
+        images = try container.decodeIfPresent([ImageObject].self, forKey: .images)
         name = try container.decode(String.self, forKey: .name)
     }
+}
+
+struct ImageObject: Codable {
+    var height: Int
+    var url: String
+    var width: Int
 }
