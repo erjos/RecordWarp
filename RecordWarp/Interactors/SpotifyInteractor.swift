@@ -8,6 +8,7 @@
 
 import Foundation
 
+//GENERAL IMPROVEMENT TODOS:
 // implement feature to pause and resume downloads depending on whether the user still requires that content at the time
 // implement feature to store the resume data object if the download fails
 // consider what you could do to create this as a framework potentially
@@ -47,6 +48,7 @@ class SpotifyInteractor: SpotifyProtocol {
         }
     }
     
+    //IDK about this search, might be better to just use the web api and then not worry about calling in the artists separately
     //gets a single list page for an initial search query
     func search(_ query: String, success: @escaping (SPTListPage) -> Void) {
         guard let session = self.getSessionFromUserDefaults() else {
@@ -65,6 +67,8 @@ class SpotifyInteractor: SpotifyProtocol {
           }
     }
     
+    //Can probably put this in it's own class, doesnt really have a place in the interactor
+    //TODO:// maybe add intelligence to know when to fetch a new one if this fails out though
     func getSessionFromUserDefaults() -> SPTSession? {
         guard let sessionData = UserDefaults.standard.object(forKey: "currentSession") as? Data else {
             print("nothing stored!")
@@ -78,8 +82,78 @@ class SpotifyInteractor: SpotifyProtocol {
         
         return session
     }
+    
+    
+    /**
+      * Sends an API request to Spotify to search with a specific query.
+     - Parameters:
+        - query: The search text
+        - completion: closure returned once the function has finished
+        - data: The data returned from the service
+        - response: UrlResponse object
+        - error: The client error if one exists
+    */
+    func search(with query: String, types:  [SearchQueryType], completion: @escaping (_ data:Data?, _ response: URLResponse?, _ error: Error?)-> Void) {
+        let urlPath = URL(string: "https://api.spotify.com/v1/search")
+        let token = getSessionFromUserDefaults()?.accessToken
+        let typesStrings = types.map { $0.rawValue }
+        let typesHeader = typesStrings.joined(separator: ",")
         
-  
+        let values = ["type": typesHeader, "q": query]
+        
+        guard let urlRequest = try? SPTRequest.createRequest(for: urlPath, withAccessToken: token, httpMethod: "Get", values: values, valueBodyIsJSON: false, sendDataAsQueryString: true) else {
+            return
+        }
+        
+        let task = URLSession.shared.dataTask(with: urlRequest) { (data, urlresponse, error) in
+            if let err = error {
+                self.handleClientError(err)
+                
+            }
+                   
+            guard let httpResponse = urlresponse as? HTTPURLResponse,
+                (200...299).contains(httpResponse.statusCode) else {
+                    self.handleServerError(urlresponse)
+                    return
+                    
+            }
+            
+            if let unwrapData = data { //let mimeType = httpResponse.mimeType, mimeType == "text/html",
+                
+                if let decoded = self.decodeJsonToObject(unwrapData) as? [String: Any] {
+                    //use SPTPartialAlbum
+                    let track = decoded["albums"] as? [String: Any]
+                    
+                    //use SPTPartialTrack
+                    let trackPage = decoded["tracks"] as? [String: Any]
+                    
+                    //use the codable models here maybe
+                    let artists = decoded["artists"] as? [String: Any]
+                }
+                
+            }
+        }
+        //converts data to a string
+        task.resume()
+    }
+    
+    //converts an object to JSON
+    private func decodeJsonToObject(_ data: Data) -> Any? {
+        let object = try? JSONSerialization.jsonObject(with: data, options: [])
+        //looks like we might be able to cast this as a dictionary
+        return object
+    }
+    
+    private func decodeJson(_ responseData: Data) -> SearchResponseObject? {
+        let decoder = JSONDecoder()
+        do {
+            let response = try decoder.decode(SearchResponseObject.self, from: responseData)
+            return response
+        } catch {
+            print(error.localizedDescription)
+        }
+        return nil
+    }
     
     func getRecentlyPlayedTracks(_ accessToken: String) {
         //fetch recently played tracks
@@ -111,9 +185,14 @@ class SpotifyInteractor: SpotifyProtocol {
     }
 }
 
-class SearchResultsViewModel {
-    var isFetchInProgress = false
-    var currentResultsPage: SPTListPage?
+//TODO: reduce this to one enum if you can... if not no worries one is used here the other for view purposes
+//This is redundant with search scope that exists on the view controller currently
+//might want to let users search for playlist just in case?
+enum SearchQueryType: String {
+    case Track = "track"
+    case Album = "album"
+    case Artist = "artist"
+    case Playlist = "playlist"
 }
 
 protocol SpotifyProtocol {
@@ -122,4 +201,5 @@ protocol SpotifyProtocol {
     func search(_ query: String, success: @escaping (SPTListPage)->Void)
     
     func getNextPage(listPage: SPTListPage, success: @escaping (SPTListPage) -> Void)
+    func search(with query: String, types: [SearchQueryType], completion: @escaping (_ data:Data?, _ response: URLResponse?, _ error: Error?)-> Void)
 }

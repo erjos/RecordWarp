@@ -33,6 +33,7 @@
 		52B73999237A224100F6A09F /* CacheLRU.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B73998237A224100F6A09F /* CacheLRU.swift */; };
 		52B7399C237A51C100F6A09F /* MainCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B7399A237A51C100F6A09F /* MainCollectionViewCell.swift */; };
 		52B7399D237A51C100F6A09F /* MainCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 52B7399B237A51C100F6A09F /* MainCollectionViewCell.xib */; };
+		52EBF32F238C975F005B3AC7 /* SpotifyResponseModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52EBF32E238C975F005B3AC7 /* SpotifyResponseModels.swift */; };
 		D0A8BA51B1CE02F626B6D603 /* Pods_RecordWarp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 214C147D8A6464E575041868 /* Pods_RecordWarp.framework */; };
 /* End PBXBuildFile section */
 
@@ -69,6 +70,7 @@
 		52B73998237A224100F6A09F /* CacheLRU.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CacheLRU.swift; sourceTree = "<group>"; };
 		52B7399A237A51C100F6A09F /* MainCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainCollectionViewCell.swift; sourceTree = "<group>"; };
 		52B7399B237A51C100F6A09F /* MainCollectionViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MainCollectionViewCell.xib; sourceTree = "<group>"; };
+		52EBF32E238C975F005B3AC7 /* SpotifyResponseModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotifyResponseModels.swift; sourceTree = "<group>"; };
 		72F8B1100C8A117E155E9091 /* Pods-RecordWarp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RecordWarp.debug.xcconfig"; path = "Pods/Target Support Files/Pods-RecordWarp/Pods-RecordWarp.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -173,6 +175,7 @@
 			isa = PBXGroup;
 			children = (
 				52B739912379247300F6A09F /* SptSearchViewModel.swift */,
+				52EBF32E238C975F005B3AC7 /* SpotifyResponseModels.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -326,6 +329,7 @@
 				520A18CA211A50AF001E30F7 /* AppDelegate.swift in Sources */,
 				52B7398F2377BF8100F6A09F /* Throttler.swift in Sources */,
 				52B7399C237A51C100F6A09F /* MainCollectionViewCell.swift in Sources */,
+				52EBF32F238C975F005B3AC7 /* SpotifyResponseModels.swift in Sources */,
 				520A18E8211A893A001E30F7 /* ResultsTableViewController.swift in Sources */,
 				52B73999237A224100F6A09F /* CacheLRU.swift in Sources */,
 				52B7399623792F5200F6A09F /* SearchResultsTableViewCell.swift in Sources */,

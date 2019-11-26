@@ -14,7 +14,7 @@ class SptSearchViewModel {
     //three result possibilities depending on what we want to display
     var trackResults:[SPTPartialTrack]?
     var albumResults:[SPTPartialAlbum]?
-    var artistResults:[SPTArtist]?
+    var artistResults:[SPTPartialArtist]?
     
     //used to page results from the service, the items in the list page will change depending on how we query the search
     var currentListPage:SPTListPage?

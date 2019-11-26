@@ -83,22 +83,31 @@ class ResultsTableViewController: UITableViewController {
     //TODO: move this search function to a different class
     func search(text: String, queryType: SPTSearchQueryType) {
         //not sure how well this session manager func will work
+        //TODO: clean this up, looks like you also have some method on the interactor you're using to grab the session... clean up your code yo! get this search working!!!
         guard let session = SessionManager.getCurrentSession() else {
             return
         }
         
+        //this is just a test
+        self.spotifyInteractor.search(with: text, types: [.Album,.Artist,.Track]) { (data, resp, err) in
+            //biatch
+        }
+        
         if(session.isValid()) {
             //TODO: move this method to interactor layer
+            
             SPTSearch.perform(withQuery: text, queryType: queryType, accessToken: session.accessToken) { (error, list) in
+                
+                //TODO: this crashes when the list is nil bc we're not handling the errors properly
                 let listPage = list as! SPTListPage
                 
+                //this list page represents the list page for the new type
                 self.viewModel.currentListPage = listPage
                 
-                //TODO - create 3 results lists on the vm and then one main results - we switch between the two based on scope
                 if queryType == .queryTypeTrack {
                     self.viewModel.trackResults = self.viewModel.currentListPage?.items as? [SPTPartialTrack]
                 } else if queryType == .queryTypeArtist {
-                    self.viewModel.artistResults = self.viewModel.currentListPage?.items as? [SPTArtist]
+                    self.viewModel.artistResults = self.viewModel.currentListPage?.items as? [SPTPartialArtist]
                 } else if queryType == .queryTypeAlbum {
                     self.viewModel.albumResults = self.viewModel.currentListPage?.items as? [SPTPartialAlbum]
                 }
@@ -235,7 +244,13 @@ extension ResultsTableViewController: UISearchResultsUpdating {
 }
 
 extension ResultsTableViewController: UISearchBarDelegate {
+    
+    //We need to consider how we will handle switching back and forth between scopes if text changes vs if text doesnt change
+    // could put a function in place that is responsible for checking if the text has changed since the last scope switch - or just pull in all three scopes data at once...
+    
     func searchBar(_ searchBar: UISearchBar, selectedScopeButtonIndexDidChange selectedScope: Int) {
+        guard let text = searchController.searchBar.text,
+        text != "" else { return }
         let scope = getCurrentScope()
         let query = getQueryType(from: scope)
         self.search(text: searchBar.text!, queryType: query)
