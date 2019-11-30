@@ -9,7 +9,7 @@ import UIKit
 
 //load only the search for the active category to begin, but consider loading all three to improve perfomance maybe
 
-fileprivate enum SearchScope: String {
+enum SearchScope: String {
     case Tracks = "Tracks"
     case Artists = "Artists"
     case Albums = "Albums"
@@ -25,17 +25,12 @@ class ResultsTableViewController: UITableViewController {
     lazy var spotifyInteractor: SpotifyProtocol = SpotifyInteractor()
     //TODO: consider decreasing the tiime here
     var throttler = Throttler(seconds: 5.3)
+    var currentScope: SearchScope = .Tracks
     
     let searchController = UISearchController(searchResultsController: nil)
     
     func searchBarIsEmpty() -> Bool {
         return searchController.searchBar.text?.isEmpty ?? true
-    }
-    
-    func filterContentForSearchText(_ searchText: String, scope: String = "Tracks") {
-        //modify this method to update the search via spotify rather than filter the results we have here
-        viewModel.filterContentForSearchText(searchText, scope: scope)
-        self.tableView.reloadData()
     }
     
 //    func isFiltering() -> Bool {
@@ -46,7 +41,8 @@ class ResultsTableViewController: UITableViewController {
         super.viewDidLoad()
         setupSearchController()
         
-        self.viewModel.trackResults = viewModel.currentListPage?.items as? [SPTPartialTrack]
+        //set the track results
+        self.viewModel.trackResults = viewModel.trackListPage?.items
         
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
@@ -80,43 +76,6 @@ class ResultsTableViewController: UITableViewController {
         // Dispose of any resources that can be recreated.
     }
     
-    //TODO: move this search function to a different class
-    func search(text: String, queryType: SPTSearchQueryType) {
-        //not sure how well this session manager func will work
-        //TODO: clean this up, looks like you also have some method on the interactor you're using to grab the session... clean up your code yo! get this search working!!!
-        guard let session = SessionManager.getCurrentSession() else {
-            return
-        }
-        
-        //this is just a test
-        self.spotifyInteractor.search(with: text, types: [.Album,.Artist,.Track]) { (data, resp, err) in
-            //biatch
-        }
-        
-        if(session.isValid()) {
-            //TODO: move this method to interactor layer
-            
-            SPTSearch.perform(withQuery: text, queryType: queryType, accessToken: session.accessToken) { (error, list) in
-                
-                //TODO: this crashes when the list is nil bc we're not handling the errors properly
-                let listPage = list as! SPTListPage
-                
-                //this list page represents the list page for the new type
-                self.viewModel.currentListPage = listPage
-                
-                if queryType == .queryTypeTrack {
-                    self.viewModel.trackResults = self.viewModel.currentListPage?.items as? [SPTPartialTrack]
-                } else if queryType == .queryTypeArtist {
-                    self.viewModel.artistResults = self.viewModel.currentListPage?.items as? [SPTPartialArtist]
-                } else if queryType == .queryTypeAlbum {
-                    self.viewModel.albumResults = self.viewModel.currentListPage?.items as? [SPTPartialAlbum]
-                }
-                
-                self.tableView.reloadData()
-            }
-        }
-    }
-
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -124,7 +83,14 @@ class ResultsTableViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return viewModel.totalCount
+        switch self.currentScope {
+        case .Albums:
+            return viewModel.albumListPage?.totalCount ?? 0
+        case .Artists:
+            return viewModel.artistListPage?.totalCount ?? 0
+        case .Tracks:
+            return viewModel.trackListPage?.totalCount ?? 0
+        }
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -154,10 +120,10 @@ class ResultsTableViewController: UITableViewController {
 
     //Right now this just plays the song
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        var track: SPTPartialTrack!
+        var track: TrackPartial!
         track = viewModel.trackResults?[indexPath.row]
             
-        SPTAudioStreamingController.sharedInstance()?.playSpotifyURI(track?.uri.absoluteString, startingWith: 0, startingWithPosition: 0, callback: { (err) in
+        SPTAudioStreamingController.sharedInstance()?.playSpotifyURI(track?.uri, startingWith: 0, startingWithPosition: 0, callback: { (err) in
             
         })
     }
@@ -166,6 +132,7 @@ class ResultsTableViewController: UITableViewController {
 private extension ResultsTableViewController {
 
     func isLoadingCell(for indexPath: IndexPath) -> Bool {
+        //TODO: change this based on scope
         return indexPath.row >= viewModel.trackResults?.count ?? 0
     }
 
@@ -176,26 +143,27 @@ private extension ResultsTableViewController {
         return Array(indexPathsIntersection)
     }
     
-    //keep this here, it gets data from the view
-    private func getCurrentScope() -> SearchScope {
-        let searchBar = self.searchController.searchBar
-        let currentScopeIndex = searchBar.selectedScopeButtonIndex
-        guard let scopes = searchBar.scopeButtonTitles else { return .Tracks }
-        let currentScopeString = scopes[currentScopeIndex]
-        return SearchScope(rawValue: currentScopeString) ?? .Tracks
-    }
-    
-    //This can probably be moved to another class
-    func getQueryType(from scope: SearchScope) -> SPTSearchQueryType {
-        switch scope {
-        case .Tracks:
-            return .queryTypeTrack
-        case .Artists:
-            return .queryTypeArtist
-        case .Albums:
-            return .queryTypeAlbum
+    func executeSearch(text: String) {
+        //move to function on viewModel so we dont need the interactor on this page?
+        spotifyInteractor.search(with: text, types: []) { (searchObject) in
+            //
         }
     }
+    
+    func prefetchHelper<Item>(listPage: ListPageObject<Item>, scope:SearchScope) {
+        guard listPage.hasNextPage else {
+            return
+        }
+        viewModel.handlePrefetch(for: listPage, scope: scope) { (reload) in
+            //reload the correct index paths
+            DispatchQueue.main.async {
+                let indexPathsToReload = self.visibleIndexPathsToReload(intersecting: reload)
+                self.tableView.reloadRows(at: indexPathsToReload, with: .automatic)
+            }
+        }
+    }
+    
+    
 }
 
 //Used to create infinite scroll
@@ -210,19 +178,22 @@ extension ResultsTableViewController: UITableViewDataSourcePrefetching {
             return
         }
         
-        //fetch the next page of the data - the tutorial uses one method, but we can use the
-        guard let listP = viewModel.currentListPage else {
-            return
-        }
-        //check if there is a next page
-        guard viewModel.currentListPage!.hasNextPage else {
-            return
-        }
-        //fetch the next page and update the view model and table view accordingly
-        self.spotifyInteractor.getNextPage(listPage: listP) { (nextPage) in
-            let reload = self.viewModel.handleNextPage(nextPage)
-            let indexPathsToReload = self.visibleIndexPathsToReload(intersecting: reload)
-            tableView.reloadRows(at: indexPathsToReload, with: .automatic)
+        switch self.currentScope {
+        case .Albums:
+            guard let listP = viewModel.albumListPage else {
+                return
+            }
+            prefetchHelper(listPage: listP, scope: self.currentScope)
+        case .Artists:
+            guard let listP = viewModel.artistListPage else {
+                return
+            }
+            prefetchHelper(listPage: listP, scope: self.currentScope)
+        case .Tracks:
+            guard let listP = viewModel.trackListPage else {
+                return
+            }
+            prefetchHelper(listPage: listP, scope: self.currentScope)
         }
     }
 }
@@ -235,9 +206,23 @@ extension ResultsTableViewController: UISearchResultsUpdating {
             DispatchQueue.main.async {
                 guard let text = searchController.searchBar.text,
                 text != "" else { return }
-                let scope = self.getCurrentScope()
-                let query = self.getQueryType(from: scope)
-                self.search(text: text, queryType: query)
+
+                self.executeSearch(text: text)
+                
+                //use the a searchFunction on the interactor
+                //execute search handle results updata data:
+                //EXAMPLE OF OLD CODE
+//                self.viewModel.currentListPage = listPage
+//
+//                if queryType == .queryTypeTrack {
+//                    self.viewModel.trackResults = self.viewModel.currentListPage?.items as? [SPTPartialTrack]
+//                } else if queryType == .queryTypeArtist {
+//                    self.viewModel.artistResults = self.viewModel.currentListPage?.items as? [SPTPartialArtist]
+//                } else if queryType == .queryTypeAlbum {
+//                    self.viewModel.albumResults = self.viewModel.currentListPage?.items as? [SPTPartialAlbum]
+//                }
+//
+//                self.tableView.reloadData()
             }
         }
     }
@@ -245,14 +230,18 @@ extension ResultsTableViewController: UISearchResultsUpdating {
 
 extension ResultsTableViewController: UISearchBarDelegate {
     
-    //We need to consider how we will handle switching back and forth between scopes if text changes vs if text doesnt change
-    // could put a function in place that is responsible for checking if the text has changed since the last scope switch - or just pull in all three scopes data at once...
-    
     func searchBar(_ searchBar: UISearchBar, selectedScopeButtonIndexDidChange selectedScope: Int) {
+        
+        //set the current scope with updated value -- seems like this should be simpler
+        guard let titles = searchBar.scopeButtonTitles else { return }
+        let newScopeString = titles[selectedScope]
+        guard let newScope = SearchScope(rawValue: newScopeString) else { return }
+        self.currentScope = newScope
+        
         guard let text = searchController.searchBar.text,
         text != "" else { return }
-        let scope = getCurrentScope()
-        let query = getQueryType(from: scope)
-        self.search(text: searchBar.text!, queryType: query)
+        
+        //use the viewModel search function
+        //see above to execute the search
     }
 }

@@ -5,13 +5,12 @@
 //  Created by Ethan Joseph on 11/25/19.
 //  Copyright © 2019 Ethan Joseph. All rights reserved.
 //
-
 import Foundation
 
 struct SearchResponseObject: Codable {
-    var albums: AlbumPagingObject
-    var artists: ArtistPagingObject
-    var tracks: TrackPagingObject
+    var albums: ListPageObject<AlbumPartial>
+    var artists: ListPageObject<Artist>
+    var tracks: ListPageObject<TrackPartial>
     
     private enum CodingKeys: String, CodingKey {
         case albums
@@ -21,13 +20,56 @@ struct SearchResponseObject: Codable {
     
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        albums = try container.decode(AlbumPagingObject.self, forKey: .albums)
-        artists = try container.decode(ArtistPagingObject.self, forKey: .artists)
-        tracks = try container.decode(TrackPagingObject.self, forKey: .tracks)
+        albums = try container.decode(ListPageObject.self, forKey: .albums)
+        artists = try container.decode(ListPageObject.self, forKey: .artists)
+        tracks = try container.decode(ListPageObject.self, forKey: .tracks)
     }
 }
 
-struct AlbumPagingObject: Codable {
+struct ListPageObject<Item :Codable>: Codable {
+    var items: [Item]
+    var next: String?
+    var total: Int
+    
+    var hasNextPage: Bool {
+        return next == nil ? false : true
+    }
+    
+    var totalCount: Int {
+        return (Int(total) > 3000) ? 3000 : Int(total)
+    }
+    
+    private enum CondingKeys: String, CodingKey {
+        case items
+        case next
+        case total
+    }
+    
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        items = try container.decode([Item].self, forKey: .items)
+        next = try? container.decode(String.self, forKey: .next)
+        total = try container.decode(Int.self, forKey: .total)
+    }
+    
+    //TODO: is this the best way to do this?
+    func requestNextPage(success: @escaping(ListPageObject<Item>?)->()) {
+        let interactor = SpotifyInteractor()
+        interactor.requestNextPage(url: self.next!, currentList: self) { (list) in
+            success(list)
+        }
+    }
+}
+
+struct AlbumPagingObject: Codable, Pageable {
+    var totalListLength: Int {
+        return total
+    }
+    
+    var hasNextPage: Bool {
+        return next == nil ? false : true
+    }
+    
     var items: [AlbumPartial]
     var next: String?
     var total: Int
@@ -44,9 +86,24 @@ struct AlbumPagingObject: Codable {
         next = try? container.decode(String.self, forKey: .next)
         total = try container.decode(Int.self, forKey: .total)
     }
+    
+    func requestNextPage() -> Pageable? {
+        //build the request to get the next page and then return the object?
+        
+        //create two individual functions responsible for making the request and decoding the object on a separate class
+        return nil
+    }
 }
 
-struct TrackPagingObject: Codable {
+struct TrackPagingObject: Codable, Pageable {
+    var totalListLength: Int {
+        return total
+    }
+    
+    var hasNextPage: Bool {
+        return next == nil ? false : true
+    }
+    
     var items: [TrackPartial]
     var next: String?
     var total: Int
@@ -63,9 +120,21 @@ struct TrackPagingObject: Codable {
         next = try? container.decode(String.self, forKey: .next)
         total = try container.decode(Int.self, forKey: .total)
     }
+    
+    func requestNextPage() -> Pageable? {
+        nil
+    }
 }
 
-struct ArtistPagingObject: Codable {
+struct ArtistPagingObject: Codable, Pageable {
+    var totalListLength: Int {
+        return total
+    }
+    
+    var hasNextPage: Bool {
+        return next == nil ? false : true
+    }
+    
     var items: [Artist]
     var next: String?
     var total: Int
@@ -81,6 +150,10 @@ struct ArtistPagingObject: Codable {
         items = try container.decode([Artist].self, forKey: .items)
         next = try? container.decode(String.self, forKey: .next)
         total = try container.decode(Int.self, forKey: .total)
+    }
+    
+    func requestNextPage() -> Pageable? {
+        return nil
     }
 }
 
@@ -157,4 +230,12 @@ struct ImageObject: Codable {
     var height: Int
     var url: String
     var width: Int
+}
+
+//paging objects should conform to this so that they can implement the function to get the next page
+protocol Pageable {
+    var totalListLength: Int { get }
+    var hasNextPage: Bool { get }
+    //requests the next page if one exists
+    func requestNextPage() -> Pageable?
 }

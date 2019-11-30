@@ -38,7 +38,7 @@ class SearchResultsTableViewCell: UITableViewCell {
         self.albumImage.image = image
     }
     
-    func setCellForTrack(_ track: SPTPartialTrack) {
+    func setCellForTrack(_ track: TrackPartial) {
         self.contentName.text = track.name
         self.additionalInfo.text = track.album.name
         if let artist = track.artists.first as? SPTPartialArtist {

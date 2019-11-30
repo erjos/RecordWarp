@@ -43,13 +43,11 @@ class ViewController: UIViewController {
     
     func search(text: String) {
         if(session.isValid()) {
-            //move this method to interactor layer
-            SPTSearch.perform(withQuery: text, queryType: .queryTypeTrack, accessToken: session.accessToken) { (error, list) in
-                //there are hasNextPage variables and request next page functions...
-                //should be able to use this to provide a good way to move through the results
-                let listPage = list as! SPTListPage
-                
-                self.performSegue(withIdentifier: "showResults", sender: listPage)
+            let interactor = SpotifyInteractor()
+            interactor.search(with: text, types: [.Album,.Artist,.Track]) { (searchResult) in
+                DispatchQueue.main.async {
+                    self.performSegue(withIdentifier: "showResults", sender: searchResult)
+                }
             }
         }
     }
@@ -57,9 +55,12 @@ class ViewController: UIViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if(segue.identifier == "showResults"){
             let resultsVC = segue.destination as! ResultsTableViewController
+            let searchResults = sender as? SearchResponseObject
             
-            //Maybe just initialize the viewModel with a list page? Idk if i like how this works
-            resultsVC.viewModel.currentListPage = sender as? SPTListPage
+            //set all three list pages - introduce a method to do this in one line - or set the search results page on the view model?
+            resultsVC.viewModel.albumListPage = searchResults?.albums
+            resultsVC.viewModel.artistListPage = searchResults?.artists
+            resultsVC.viewModel.trackListPage = searchResults?.tracks
         }
     }
     

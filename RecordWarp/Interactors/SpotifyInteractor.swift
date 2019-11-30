@@ -27,62 +27,104 @@ class SpotifyInteractor: SpotifyProtocol {
     
     //Add Error cases and handling to these methods
     
-    // gets the next page from an SPTListPage
-    func getNextPage(listPage: SPTListPage, success: @escaping (SPTListPage) -> Void) {
+    //called by the view model? manages if data is fetching or not
+    func getNextPage<Item>(listPage: ListPageObject<Item>, success: @escaping (ListPageObject<Item>?) -> Void) {
         guard !isDataFetching else {
             return
         }
         
         isDataFetching = true
         
-        guard let session = self.getSessionFromUserDefaults() else {
+        guard let session = SessionManager.getCurrentSession() else {
             return
         }
         
-        listPage.requestNextPage(withAccessToken: session.accessToken) { (err, list) in
-            //This crashes if there is a client error -
-            
-            let listPage = list as! SPTListPage
-            success(listPage)
+        //right now this returns a pageable object- but we'll need to modify it to use a closure or a delegate
+        listPage.requestNextPage { (list) in
+            //handle the list result
             self.isDataFetching = false
+            success(list)
         }
+        
+        //in the success of this we need to set isDataFetching back to false
+        
+//            { (err, list) in
+//            //This crashes if there is a client error -
+//
+//            let listPage = list as! SPTListPage
+//            success(listPage)
+//            self.isDataFetching = false
+//        }
     }
     
-    //IDK about this search, might be better to just use the web api and then not worry about calling in the artists separately
-    //gets a single list page for an initial search query
-    func search(_ query: String, success: @escaping (SPTListPage) -> Void) {
-        guard let session = self.getSessionFromUserDefaults() else {
+    /**
+      * Sends an API request to Spotify to request the next paging object for a search - called from the paging object model.
+     - Parameters:
+        - url: the url of the next page in the search
+        - currentList: the current list page that is displayed
+        - completion: closure returned once the function has finished
+        - data: The data returned from the service
+        - response: UrlResponse object
+        - error: The client error if one exists
+    */
+    func requestNextPage<Item>(url: String, currentList: ListPageObject<Item>, success: @escaping(_ listPage: ListPageObject<Item>?)->Void) {
+        let urlPath = URL(string: url)
+        let token = SessionManager.getCurrentSession()?.accessToken
+        
+        //TODO: test this
+        guard let urlRequest = try? SPTRequest.createRequest(for: urlPath, withAccessToken: token, httpMethod: "Get", values: nil, valueBodyIsJSON: false, sendDataAsQueryString: false) else {//createRequest(for: urlPath, withAccessToken: token, httpMethod: "Get", values: [:], valueBodyIsJSON: true, sendDataAsQueryString: false) else {
             return
         }
         
-        SPTSearch.perform(withQuery: query, queryType: .queryTypeTrack, accessToken: session.accessToken) { (error, list) in
-              //there are hasNextPage variables and request next page functions...
-              //should be able to use this to provide a good way to move through the results
-              let listPage = list as! SPTListPage
-            
-            //TODO: move this item initialization out of this method so that we have access to the list page and it's info on the view controller
-              //let items = listPage.items as! [SPTPartialTrack]
-            
-            success(listPage)
-          }
+        //TODO: consider breaking this handling into a method to avoid repitition
+        let task = URLSession.shared.dataTask(with: urlRequest) { (data, urlresponse, error) in
+            if let err = error {
+                self.handleClientError(err)
+                
+            }
+            guard let httpResponse = urlresponse as? HTTPURLResponse,
+                (200...299).contains(httpResponse.statusCode) else {
+                    self.handleServerError(urlresponse)
+                    return
+                    
+            }
+            if let unwrapData = data {
+                //let type = self.getType(from: currentList)
+                let responseObject: ListPageObject<Item>? = self.decodeListPage(unwrapData)
+                
+                success(responseObject)
+            }
+        }
+        task.resume()
     }
     
-    //Can probably put this in it's own class, doesnt really have a place in the interactor
-    //TODO:// maybe add intelligence to know when to fetch a new one if this fails out though
-    func getSessionFromUserDefaults() -> SPTSession? {
-        guard let sessionData = UserDefaults.standard.object(forKey: "currentSession") as? Data else {
-            print("nothing stored!")
-            return nil
-        }
-        
-        guard let session = NSKeyedUnarchiver.unarchiveObject(with: sessionData) as? SPTSession else {
-            print("No session!")
-            return nil
-        }
-        
-        return session
-    }
+    //returns abstract type of decoded object
+//    func decodePageableObject(data: Data, type: SearchQueryType) -> Pageable? {
+//        switch type {
+//        case .Album:
+//            return decodeAlbumListPageJson(data)
+//        case .Artist:
+//            return decodeArtistListPage(data)
+//        case .Track:
+//            return decodeTrackListPage(data)
+//        default:
+//            return decodeTrackListPage(data)
+//        }
+//    }
     
+    //returns the enum for the type of listPage we're working with
+    func getType(from listPage: Pageable) -> SearchQueryType {
+        if let _ = listPage as? TrackPagingObject {
+            return .Track
+        } else if let _ = listPage as? AlbumPagingObject {
+            return .Album
+        } else if let _ = listPage as? ArtistPagingObject {
+            return .Artist
+        } else {
+            //Default (should never execute)
+            return .Track
+        }
+    }
     
     /**
       * Sends an API request to Spotify to search with a specific query.
@@ -93,9 +135,10 @@ class SpotifyInteractor: SpotifyProtocol {
         - response: UrlResponse object
         - error: The client error if one exists
     */
-    func search(with query: String, types:  [SearchQueryType], completion: @escaping (_ data:Data?, _ response: URLResponse?, _ error: Error?)-> Void) {
+    func search(with query: String, types:  [SearchQueryType], completion: @escaping (_ searchObject: SearchResponseObject?)-> Void) {
         let urlPath = URL(string: "https://api.spotify.com/v1/search")
-        let token = getSessionFromUserDefaults()?.accessToken
+        //if user is not authorized, nothing happens
+        let token = SessionManager.getCurrentSession()?.accessToken
         let typesStrings = types.map { $0.rawValue }
         let typesHeader = typesStrings.joined(separator: ",")
         
@@ -110,32 +153,56 @@ class SpotifyInteractor: SpotifyProtocol {
                 self.handleClientError(err)
                 
             }
-                   
             guard let httpResponse = urlresponse as? HTTPURLResponse,
                 (200...299).contains(httpResponse.statusCode) else {
                     self.handleServerError(urlresponse)
                     return
                     
             }
-            
-            if let unwrapData = data { //let mimeType = httpResponse.mimeType, mimeType == "text/html",
-                
-                let responseObject = self.decodeJson(unwrapData)
-                
+            if let unwrapData = data {
+                let responseObject = self.decodeSearchResponseJson(unwrapData)
+                completion(responseObject)
             }
         }
-        //converts data to a string
         task.resume()
     }
     
-    //converts an object to JSON
-    private func decodeJsonToObject(_ data: Data) -> Any? {
-        let object = try? JSONSerialization.jsonObject(with: data, options: [])
-        //looks like we might be able to cast this as a dictionary
-        return object
+    //DECODE OBJECTS
+    private func decodeListPage<Item:Codable>(_ responseData: Data) -> ListPageObject<Item>? {
+        
+        let decoder = JSONDecoder()
+        do {
+            let response = try decoder.decode(ListPageObject<Item>.self, from: responseData)
+            return response
+        } catch {
+            print(error.localizedDescription)
+        }
+        return nil
     }
     
-    private func decodeJson(_ responseData: Data) -> SearchResponseObject? {
+//    private func decodeArtistListPage(_ responseData: Data) -> ArtistPagingObject? {
+//        let decoder = JSONDecoder()
+//        do {
+//            let response = try decoder.decode(ArtistPagingObject.self, from: responseData)
+//            return response
+//        } catch {
+//            print(error.localizedDescription)
+//        }
+//        return nil
+//    }
+//
+//    private func decodeAlbumListPageJson(_ responseData: Data) -> AlbumPagingObject? {
+//        let decoder = JSONDecoder()
+//        do {
+//            let response = try decoder.decode(AlbumPagingObject.self, from: responseData)
+//            return response
+//        } catch {
+//            print(error.localizedDescription)
+//        }
+//        return nil
+//    }
+    
+    private func decodeSearchResponseJson(_ responseData: Data) -> SearchResponseObject? {
         let decoder = JSONDecoder()
         do {
             let response = try decoder.decode(SearchResponseObject.self, from: responseData)
@@ -146,6 +213,14 @@ class SpotifyInteractor: SpotifyProtocol {
         return nil
     }
     
+    private func decodeJsonToObject(_ data: Data) -> Any? {
+        let object = try? JSONSerialization.jsonObject(with: data, options: [])
+        //looks like we might be able to cast this as a dictionary
+        return object
+    }
+    
+    
+    ///NOT IN USE YET
     func getRecentlyPlayedTracks(_ accessToken: String) {
         //fetch recently played tracks
         guard let urlRequest = try? SPTRequest.createRequest(for: URL(string: "https://api.spotify.com/v1/me/player/recently-played"), withAccessToken: accessToken, httpMethod: "Get", values: [:], valueBodyIsJSON: true, sendDataAsQueryString: true) else {
@@ -176,9 +251,6 @@ class SpotifyInteractor: SpotifyProtocol {
     }
 }
 
-//TODO: reduce this to one enum if you can... if not no worries one is used here the other for view purposes
-//This is redundant with search scope that exists on the view controller currently
-//might want to let users search for playlist just in case?
 enum SearchQueryType: String {
     case Track = "track"
     case Album = "album"
@@ -187,10 +259,8 @@ enum SearchQueryType: String {
 }
 
 protocol SpotifyProtocol {
-    func getRecentlyPlayedTracks(_ accessToken: String)
-    //maybe add the type that we want to search for?
-    func search(_ query: String, success: @escaping (SPTListPage)->Void)
-    
-    func getNextPage(listPage: SPTListPage, success: @escaping (SPTListPage) -> Void)
-    func search(with query: String, types: [SearchQueryType], completion: @escaping (_ data:Data?, _ response: URLResponse?, _ error: Error?)-> Void)
+    func search(with query: String, types:  [SearchQueryType], completion: @escaping (_ searchObject: SearchResponseObject?)-> Void)
+    func getNextPage<Item>(listPage: ListPageObject<Item>, success: @escaping (ListPageObject<Item>?) -> Void)
+    //func getRecentlyPlayedTracks(_ accessToken: String)
+    //func search(with query: String, types: [SearchQueryType], completion: @escaping (_ data:Data?, _ response: URLResponse?, _ error: Error?)-> Void)
 }

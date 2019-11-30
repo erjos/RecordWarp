@@ -7,44 +7,38 @@
 //
 import Foundation
 
-class SptSearchViewModel {
+class SptSearchViewModel{
     
-    //var results:[SPTPartialTrack]?
+    //item objects for each result type
+    var trackResults:[TrackPartial]?
+    var albumResults:[AlbumPartial]?
+    var artistResults:[Artist]?
     
-    //three result possibilities depending on what we want to display
-    var trackResults:[SPTPartialTrack]?
-    var albumResults:[SPTPartialAlbum]?
-    var artistResults:[SPTPartialArtist]?
-    
-    //used to page results from the service, the items in the list page will change depending on how we query the search
-    var currentListPage:SPTListPage?
-    
-    //TODO: filtering doesn't work right now
-    var filteredTracks  = [SPTPartialTrack]()
+    //this is where we'll define the generic type of the item
+    var trackListPage: ListPageObject<TrackPartial>?
+    var albumListPage: ListPageObject<AlbumPartial>?
+    var artistListPage: ListPageObject<Artist>?
     
     var imageCache = NSCache<NSString, UIImage>()
     
-    //** returns total count table view uses to generate rows (max 3000 rows for efficiency)
-    var totalCount: Int {
-        guard let count = currentListPage?.totalListLength else {
-            return 0
-        }
-        return (Int(count) > 3000) ? 3000 : Int(count)
-    }
+    //TODO: remove reference to the interactor on the view model - write tests that can be mocked with the spotify protocol
+    lazy var spotifyInteractor: SpotifyProtocol = SpotifyInteractor()
     
     //might need the full artist object to get this
     func getImageForArtist(artist: SPTPartialArtist, callback: @escaping (UIImage)->()) {
+    
     }
     
-    func getImageForTrack(track: SPTPartialTrack, callback: @escaping (UIImage)->()) {
-        if let albumImage = track.album.covers.first as? SPTImage {
+    func getImageForTrack(track: TrackPartial, callback: @escaping (UIImage)->()) {
+        if let albumImage = track.album.images.first {
             
-            if let image = self.imageCache.object(forKey: albumImage.imageURL.absoluteString as NSString) {
+            if let image = self.imageCache.object(forKey: albumImage.url as NSString) {
                 callback(image)
             } else {
-                self.fetchImage(url: albumImage.imageURL) { (image) in
+                let url = URL(string: albumImage.url)
+                self.fetchImage(url: url!) { (image) in
                     //add the image to the cache
-                    self.imageCache.setObject(image, forKey: albumImage.imageURL.absoluteString as NSString)
+                    self.imageCache.setObject(image, forKey: albumImage.url as NSString)
                     callback(image)
                 }
             }
@@ -68,36 +62,41 @@ class SptSearchViewModel {
     }
     
     //** returns index paths of new tracks that we are adding to the data source
-    private func calculateIndexPathsToReload(from newTracks: [SPTPartialTrack]) -> [IndexPath] {
-        let startIndex = trackResults!.count - newTracks.count
-        let endIndex = startIndex + newTracks.count
+    private func calculateIndexPathsToReload<Item>(from newItems: [Item], updatedResults: [Item]) -> [IndexPath] {
+        let startIndex = updatedResults.count - newItems.count
+        let endIndex = startIndex + newItems.count
         return (startIndex..<endIndex).map { IndexPath(row: $0, section: 0) }
     }
     
-    //** filters the content based on search text
-    func filterContentForSearchText(_ searchText: String, scope: String = "All") {
-    
-        //TODO: take scope into account to switch between tracks,albums and artists
-        guard let tracks = trackResults else {
+    func handlePrefetch<Item>(for listPage: ListPageObject<Item>?, scope: SearchScope, completion: @escaping ([IndexPath])->Void) {
+        guard let listP = listPage else {
             return
         }
-    
-        filteredTracks = tracks.filter({ (track) -> Bool in
-            return track.name.lowercased().contains(searchText.lowercased())
-        })
-    }
-    
-    //** updates the data source and returns the list of rows to be updated on the table view
-    func handleNextPage(_ listPage: SPTListPage) -> [IndexPath] {
-        guard let newTracks = listPage.items as? [SPTPartialTrack] else {
-            return []
+        
+        guard listP.hasNextPage else {
+            return
         }
-        //update data source
-        self.trackResults?.append(contentsOf: newTracks)
-        //uodate current listPage
-        self.currentListPage = listPage
-        //calculate indexPath to update
-        let indexPathsToReload = self.calculateIndexPathsToReload(from: newTracks)
-        return indexPathsToReload
+        
+        self.spotifyInteractor.getNextPage(listPage: listP) { (newListPage) in
+            var indexPathsToReload: [IndexPath]
+            
+            //TODO: we need to update the current list page on the view model (otherwise the fetch will only work once), but right now we have a circular call - doesnt need to be happening and not sure why it is... we need to make this easier to understand so that we can debug it
+            
+            switch scope {
+            case .Albums:
+                let newItems = newListPage?.items as? [AlbumPartial] ?? []
+                self.albumResults?.append(contentsOf: newItems)
+                indexPathsToReload = self.calculateIndexPathsToReload(from: newItems, updatedResults: self.albumResults ?? [])
+            case .Artists:
+                let newItems = newListPage?.items as? [Artist] ?? []
+                self.artistResults?.append(contentsOf: newItems)
+                indexPathsToReload = self.calculateIndexPathsToReload(from: newItems, updatedResults: self.artistResults ?? [])
+            case .Tracks:
+                let newItems = newListPage?.items as? [TrackPartial] ?? []
+                self.trackResults?.append(contentsOf: newItems)
+                indexPathsToReload = self.calculateIndexPathsToReload(from: newItems, updatedResults: self.trackResults ?? [])
+            }
+            completion(indexPathsToReload)
+        }
     }
 }

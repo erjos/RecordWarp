@@ -9,6 +9,7 @@
 import Foundation
 
 //Evaluate if this is the best way to do this
+//TODO:// maybe add intelligence to know when to fetch a new one if this fails out though
 class SessionManager {
     static func getCurrentSession()->SPTSession?{
         guard let sessionData = UserDefaults.standard.object(forKey: "currentSession") as? Data else {
