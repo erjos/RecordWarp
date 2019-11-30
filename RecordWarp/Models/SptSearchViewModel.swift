@@ -16,7 +16,6 @@ class SptSearchViewModel{
     var albumResults:[AlbumPartial]?
     var artistResults:[Artist]?
     
-    //this is where we'll define the generic type of the item
     var trackListPage: ListPageObject<TrackPartial>?
     var albumListPage: ListPageObject<AlbumPartial>?
     var artistListPage: ListPageObject<Artist>?
@@ -25,9 +24,13 @@ class SptSearchViewModel{
     
     lazy var spotifyInteractor: SpotifyProtocol = SpotifyInteractor()
     
-    //might need the full artist object to get this
-    func getImageForArtist(artist: SPTPartialArtist, callback: @escaping (UIImage)->()) {
+    //TODO: implement these image grabbing methods
+    func getImage(for album: AlbumPartial, callback: @escaping (UIImage)->Void) {
+        //fetch the album image and return it - cache etc.
+    }
     
+    func getImage(for artist: Artist, callback: @escaping (UIImage)->Void) {
+        //fetch the artist image and return it - include cache etc.
     }
     
     func getImageForTrack(track: TrackPartial, callback: @escaping (UIImage)->()) {

@@ -46,12 +46,13 @@ class SearchResultsTableViewCell: UITableViewCell {
         }
     }
     
-    func setCellForArtist(_ artist: SPTPartialArtist) {
+    func setCellForArtist(_ artist: Artist) {
         self.contentName.text = artist.name
     }
     
-    func setCellForAlbum(_ album: SPTPartialAlbum) {
-        
+    func setCellForAlbum(_ album: AlbumPartial) {
+        self.contentName.text = album.name
+        self.additionalInfo.text = album.artists.first?.name
     }
     
     override func setSelected(_ selected: Bool, animated: Bool) {

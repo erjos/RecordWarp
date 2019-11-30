@@ -97,23 +97,50 @@ class ResultsTableViewController: UITableViewController {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "resultCell", for: indexPath) as? SearchResultsTableViewCell else {
             fatalError("Did not create cell")
         }
-        
         cell.resetCell()
         
         //get different results depending on the selected scope
-        guard let results = viewModel.trackResults else { return cell }
-        if indexPath.row < results.count {
-            let track = results[indexPath.row]
-            cell.setCellForTrack(track)
-            self.viewModel.getImageForTrack(track: track) { (albumImage) in
-                    
+        switch currentScope {
+        case .Albums:
+            guard let results = viewModel.albumResults else { return cell }
+            guard indexPath.row < results.count else { return cell }
+            let album = results[indexPath.row]
+            cell.setCellForAlbum(album)
+            self.viewModel.getImage(for: album) { (albumImage) in
                 DispatchQueue.main.async {
                     if let updateCell = tableView.cellForRow(at: indexPath) as? SearchResultsTableViewCell {
                         updateCell.setCellImage(albumImage)
                     }
                 }
             }
+        case .Artists:
+            guard let results = viewModel.artistResults else { return cell }
+            guard indexPath.row < results.count else { return cell }
+            let artist = results[indexPath.row]
+            cell.setCellForArtist(artist)
+            self.viewModel.getImage(for: artist) { (artistImage) in
+                DispatchQueue.main.async {
+                    if let updateCell = tableView.cellForRow(at: indexPath) as? SearchResultsTableViewCell {
+                        updateCell.setCellImage(artistImage)
+                    }
+                }
+            }
+        case .Tracks:
+            //This is some ugle shiite see if you can fix this
+            guard let results = viewModel.trackResults else { return cell }
+            guard indexPath.row < results.count else { return cell }
+            let track = results[indexPath.row]
+            cell.setCellForTrack(track)
+            self.viewModel.getImageForTrack(track: track) { (albumImage) in
+                DispatchQueue.main.async {
+                    if let updateCell = tableView.cellForRow(at: indexPath) as? SearchResultsTableViewCell {
+                        updateCell.setCellImage(albumImage)
+                        
+                    }
+                }
+            }
         }
+        
         
         return cell
     }
