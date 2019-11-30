@@ -26,11 +26,33 @@ class SptSearchViewModel{
     
     //TODO: implement these image grabbing methods
     func getImage(for album: AlbumPartial, callback: @escaping (UIImage)->Void) {
-        //fetch the album image and return it - cache etc.
+        if let albumImage = album.images.first {
+            if let image = self.imageCache.object(forKey: albumImage.url as NSString) {
+                callback(image)
+            } else {
+                let url = URL(string: albumImage.url)
+                self.fetchImage(url: url!) { (image) in
+                    //add the image to the cache
+                    self.imageCache.setObject(image, forKey: albumImage.url as NSString)
+                    callback(image)
+                }
+            }
+        }
     }
     
     func getImage(for artist: Artist, callback: @escaping (UIImage)->Void) {
-        //fetch the artist image and return it - include cache etc.
+        if let artistImage = artist.images?.first {
+            if let image = self.imageCache.object(forKey: artistImage.url as NSString) {
+                callback(image)
+            } else {
+                let url = URL(string: artistImage.url)
+                self.fetchImage(url: url!) { (image) in
+                    //add the image to the cache
+                    self.imageCache.setObject(image, forKey: artistImage.url as NSString)
+                    callback(image)
+                }
+            }
+        }
     }
     
     func getImageForTrack(track: TrackPartial, callback: @escaping (UIImage)->()) {
