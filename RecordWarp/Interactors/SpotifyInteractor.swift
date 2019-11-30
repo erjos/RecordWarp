@@ -35,26 +35,12 @@ class SpotifyInteractor: SpotifyProtocol {
         
         isDataFetching = true
         
-        guard let session = SessionManager.getCurrentSession() else {
-            return
-        }
-        
-        //right now this returns a pageable object- but we'll need to modify it to use a closure or a delegate
         listPage.requestNextPage { (list) in
             //handle the list result
+            //TODO: figure out how we'll handle errors as well to make sure that the data fetching indicator switches back
             self.isDataFetching = false
             success(list)
         }
-        
-        //in the success of this we need to set isDataFetching back to false
-        
-//            { (err, list) in
-//            //This crashes if there is a client error -
-//
-//            let listPage = list as! SPTListPage
-//            success(listPage)
-//            self.isDataFetching = false
-//        }
     }
     
     /**
@@ -90,27 +76,12 @@ class SpotifyInteractor: SpotifyProtocol {
             }
             if let unwrapData = data {
                 //let type = self.getType(from: currentList)
-                let responseObject: SearchResponseObject? = self.decodeListPage(unwrapData)
-                
+                let responseObject: SearchResponseObject? = self.decodeSearchResponseJson(unwrapData)
                 success(responseObject)
             }
         }
         task.resume()
     }
-    
-    //returns abstract type of decoded object
-//    func decodePageableObject(data: Data, type: SearchQueryType) -> Pageable? {
-//        switch type {
-//        case .Album:
-//            return decodeAlbumListPageJson(data)
-//        case .Artist:
-//            return decodeArtistListPage(data)
-//        case .Track:
-//            return decodeTrackListPage(data)
-//        default:
-//            return decodeTrackListPage(data)
-//        }
-//    }
     
     //returns the enum for the type of listPage we're working with
     func getType(from listPage: Pageable) -> SearchQueryType {
@@ -168,41 +139,6 @@ class SpotifyInteractor: SpotifyProtocol {
     }
     
     //DECODE OBJECTS
-    //TODO: right now this is the same as the search object decode method
-    private func decodeListPage(_ responseData: Data) -> SearchResponseObject? {
-        
-        let decoder = JSONDecoder()
-        do {
-            let response = try decoder.decode(SearchResponseObject.self, from: responseData)
-            return response
-        } catch {
-            print(error.localizedDescription)
-        }
-        return nil
-    }
-    
-//    private func decodeArtistListPage(_ responseData: Data) -> ArtistPagingObject? {
-//        let decoder = JSONDecoder()
-//        do {
-//            let response = try decoder.decode(ArtistPagingObject.self, from: responseData)
-//            return response
-//        } catch {
-//            print(error.localizedDescription)
-//        }
-//        return nil
-//    }
-//
-//    private func decodeAlbumListPageJson(_ responseData: Data) -> AlbumPagingObject? {
-//        let decoder = JSONDecoder()
-//        do {
-//            let response = try decoder.decode(AlbumPagingObject.self, from: responseData)
-//            return response
-//        } catch {
-//            print(error.localizedDescription)
-//        }
-//        return nil
-//    }
-    
     private func decodeSearchResponseJson(_ responseData: Data) -> SearchResponseObject? {
         let decoder = JSONDecoder()
         do {
@@ -262,6 +198,4 @@ enum SearchQueryType: String {
 protocol SpotifyProtocol {
     func search(with query: String, types:  [SearchQueryType], completion: @escaping (_ searchObject: SearchResponseObject?)-> Void)
     func getNextPage<Item>(listPage: ListPageObject<Item>, success: @escaping (SearchResponseObject?) -> Void)
-    //func getRecentlyPlayedTracks(_ accessToken: String)
-    //func search(with query: String, types: [SearchQueryType], completion: @escaping (_ data:Data?, _ response: URLResponse?, _ error: Error?)-> Void)
 }

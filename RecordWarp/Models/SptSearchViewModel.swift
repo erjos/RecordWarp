@@ -83,15 +83,19 @@ class SptSearchViewModel{
             //TODO: we need to update the current list page on the view model (otherwise the fetch will only work once), but right now we have a circular call - doesnt need to be happening and not sure why it is... we need to make this easier to understand so that we can debug it
             
             switch scope {
+                //TODO: might be able to create a generic method to accomplish each switch case
             case .Albums:
+                self.albumListPage = responseObject?.albums
                 let newItems = responseObject?.albums?.items ?? []
                 self.albumResults?.append(contentsOf: newItems)
                 indexPathsToReload = self.calculateIndexPathsToReload(from: newItems, updatedResults: self.albumResults ?? [])
             case .Artists:
+                self.artistListPage = responseObject?.artists
                 let newItems = responseObject?.artists?.items ?? []
                 self.artistResults?.append(contentsOf: newItems)
                 indexPathsToReload = self.calculateIndexPathsToReload(from: newItems, updatedResults: self.artistResults ?? [])
             case .Tracks:
+                self.trackListPage = responseObject?.tracks
                 let newItems = responseObject?.tracks?.items ?? []
                 self.trackResults?.append(contentsOf: newItems)
                 indexPathsToReload = self.calculateIndexPathsToReload(from: newItems, updatedResults: self.trackResults ?? [])
