@@ -7,10 +7,11 @@
 //
 import Foundation
 
+//TODO: maybe fix this so that the fields are optional and use this to decode the next listPage response... we'll need to know the type to handle the result but we can prob wait until we're about to set the new data and listPage object to do that - ie when we have the scope
 struct SearchResponseObject: Codable {
-    var albums: ListPageObject<AlbumPartial>
-    var artists: ListPageObject<Artist>
-    var tracks: ListPageObject<TrackPartial>
+    var albums: ListPageObject<AlbumPartial>?
+    var artists: ListPageObject<Artist>?
+    var tracks: ListPageObject<TrackPartial>?
     
     private enum CodingKeys: String, CodingKey {
         case albums
@@ -20,9 +21,9 @@ struct SearchResponseObject: Codable {
     
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        albums = try container.decode(ListPageObject.self, forKey: .albums)
-        artists = try container.decode(ListPageObject.self, forKey: .artists)
-        tracks = try container.decode(ListPageObject.self, forKey: .tracks)
+        albums = try container.decodeIfPresent(ListPageObject.self, forKey: .albums)
+        artists = try container.decodeIfPresent(ListPageObject.self, forKey: .artists)
+        tracks = try container.decodeIfPresent(ListPageObject.self, forKey: .tracks)
     }
 }
 
@@ -53,7 +54,7 @@ struct ListPageObject<Item :Codable>: Codable {
     }
     
     //TODO: is this the best way to do this?
-    func requestNextPage(success: @escaping(ListPageObject<Item>?)->()) {
+    func requestNextPage(success: @escaping(SearchResponseObject?)->()) {
         let interactor = SpotifyInteractor()
         interactor.requestNextPage(url: self.next!, currentList: self) { (list) in
             success(list)

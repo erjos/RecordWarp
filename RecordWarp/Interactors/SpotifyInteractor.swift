@@ -28,7 +28,7 @@ class SpotifyInteractor: SpotifyProtocol {
     //Add Error cases and handling to these methods
     
     //called by the view model? manages if data is fetching or not
-    func getNextPage<Item>(listPage: ListPageObject<Item>, success: @escaping (ListPageObject<Item>?) -> Void) {
+    func getNextPage<Item>(listPage: ListPageObject<Item>, success: @escaping (SearchResponseObject?) -> Void) {
         guard !isDataFetching else {
             return
         }
@@ -67,7 +67,7 @@ class SpotifyInteractor: SpotifyProtocol {
         - response: UrlResponse object
         - error: The client error if one exists
     */
-    func requestNextPage<Item>(url: String, currentList: ListPageObject<Item>, success: @escaping(_ listPage: ListPageObject<Item>?)->Void) {
+    func requestNextPage<Item>(url: String, currentList: ListPageObject<Item>, success: @escaping(_ listPage: SearchResponseObject?)->Void) {
         let urlPath = URL(string: url)
         let token = SessionManager.getCurrentSession()?.accessToken
         
@@ -90,7 +90,7 @@ class SpotifyInteractor: SpotifyProtocol {
             }
             if let unwrapData = data {
                 //let type = self.getType(from: currentList)
-                let responseObject: ListPageObject<Item>? = self.decodeListPage(unwrapData)
+                let responseObject: SearchResponseObject? = self.decodeListPage(unwrapData)
                 
                 success(responseObject)
             }
@@ -168,11 +168,12 @@ class SpotifyInteractor: SpotifyProtocol {
     }
     
     //DECODE OBJECTS
-    private func decodeListPage<Item:Codable>(_ responseData: Data) -> ListPageObject<Item>? {
+    //TODO: right now this is the same as the search object decode method
+    private func decodeListPage(_ responseData: Data) -> SearchResponseObject? {
         
         let decoder = JSONDecoder()
         do {
-            let response = try decoder.decode(ListPageObject<Item>.self, from: responseData)
+            let response = try decoder.decode(SearchResponseObject.self, from: responseData)
             return response
         } catch {
             print(error.localizedDescription)
@@ -260,7 +261,7 @@ enum SearchQueryType: String {
 
 protocol SpotifyProtocol {
     func search(with query: String, types:  [SearchQueryType], completion: @escaping (_ searchObject: SearchResponseObject?)-> Void)
-    func getNextPage<Item>(listPage: ListPageObject<Item>, success: @escaping (ListPageObject<Item>?) -> Void)
+    func getNextPage<Item>(listPage: ListPageObject<Item>, success: @escaping (SearchResponseObject?) -> Void)
     //func getRecentlyPlayedTracks(_ accessToken: String)
     //func search(with query: String, types: [SearchQueryType], completion: @escaping (_ data:Data?, _ response: URLResponse?, _ error: Error?)-> Void)
 }
