@@ -41,7 +41,7 @@ class SearchResultsTableViewCell: UITableViewCell {
     func setCellForTrack(_ track: TrackPartial) {
         self.contentName.text = track.name
         self.additionalInfo.text = track.album.name
-        if let artist = track.artists.first as? SPTPartialArtist {
+        if let artist = track.artists.first {
             self.infoTwo.text = artist.name
         }
     }

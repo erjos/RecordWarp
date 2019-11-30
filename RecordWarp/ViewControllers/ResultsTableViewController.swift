@@ -22,7 +22,6 @@ class ResultsTableViewController: UITableViewController {
     
     var player: SPTAudioStreamingController?
     var viewModel = SptSearchViewModel()
-    lazy var spotifyInteractor: SpotifyProtocol = SpotifyInteractor()
     //TODO: consider decreasing the tiime here
     var throttler = Throttler(seconds: 5.3)
     var currentScope: SearchScope = .Tracks
@@ -32,6 +31,7 @@ class ResultsTableViewController: UITableViewController {
     func searchBarIsEmpty() -> Bool {
         return searchController.searchBar.text?.isEmpty ?? true
     }
+
     
 //    func isFiltering() -> Bool {
 //        return searchController.isActive && !searchBarIsEmpty()
@@ -42,7 +42,7 @@ class ResultsTableViewController: UITableViewController {
         setupSearchController()
         
         //set the track results
-        self.viewModel.trackResults = viewModel.trackListPage?.items
+        //self.viewModel.trackResults = viewModel.trackListPage?.items
         
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
@@ -143,13 +143,6 @@ private extension ResultsTableViewController {
         return Array(indexPathsIntersection)
     }
     
-    func executeSearch(text: String) {
-        //move to function on viewModel so we dont need the interactor on this page?
-        spotifyInteractor.search(with: text, types: []) { (searchObject) in
-            //
-        }
-    }
-    
     func prefetchHelper<Item>(listPage: ListPageObject<Item>, scope:SearchScope) {
         guard listPage.hasNextPage else {
             return
@@ -162,11 +155,8 @@ private extension ResultsTableViewController {
             }
         }
     }
-    
-    
 }
 
-//Used to create infinite scroll
 extension ResultsTableViewController: UITableViewDataSourcePrefetching {
     func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
         
@@ -198,7 +188,6 @@ extension ResultsTableViewController: UITableViewDataSourcePrefetching {
     }
 }
 
-//used to update search results based on user input - need to modify how this work to acutally run the search on this page
 extension ResultsTableViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
         //guard against empty search?
@@ -207,22 +196,8 @@ extension ResultsTableViewController: UISearchResultsUpdating {
                 guard let text = searchController.searchBar.text,
                 text != "" else { return }
 
-                self.executeSearch(text: text)
-                
-                //use the a searchFunction on the interactor
-                //execute search handle results updata data:
-                //EXAMPLE OF OLD CODE
-//                self.viewModel.currentListPage = listPage
-//
-//                if queryType == .queryTypeTrack {
-//                    self.viewModel.trackResults = self.viewModel.currentListPage?.items as? [SPTPartialTrack]
-//                } else if queryType == .queryTypeArtist {
-//                    self.viewModel.artistResults = self.viewModel.currentListPage?.items as? [SPTPartialArtist]
-//                } else if queryType == .queryTypeAlbum {
-//                    self.viewModel.albumResults = self.viewModel.currentListPage?.items as? [SPTPartialAlbum]
-//                }
-//
-//                self.tableView.reloadData()
+                self.viewModel.executeSearch(text)
+                self.tableView.reloadData()
             }
         }
     }
@@ -230,18 +205,18 @@ extension ResultsTableViewController: UISearchResultsUpdating {
 
 extension ResultsTableViewController: UISearchBarDelegate {
     
+    
     func searchBar(_ searchBar: UISearchBar, selectedScopeButtonIndexDidChange selectedScope: Int) {
-        
         //set the current scope with updated value -- seems like this should be simpler
         guard let titles = searchBar.scopeButtonTitles else { return }
         let newScopeString = titles[selectedScope]
         guard let newScope = SearchScope(rawValue: newScopeString) else { return }
         self.currentScope = newScope
+        self.tableView.reloadData()
         
+        //TODO: because we run all our searches at once, we might not need to account for the text in this method and just determine what to show and hid in the table view
         guard let text = searchController.searchBar.text,
         text != "" else { return }
         
-        //use the viewModel search function
-        //see above to execute the search
     }
 }

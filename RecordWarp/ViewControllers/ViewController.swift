@@ -56,11 +56,7 @@ class ViewController: UIViewController {
         if(segue.identifier == "showResults"){
             let resultsVC = segue.destination as! ResultsTableViewController
             let searchResults = sender as? SearchResponseObject
-            
-            //set all three list pages - introduce a method to do this in one line - or set the search results page on the view model?
-            resultsVC.viewModel.albumListPage = searchResults?.albums
-            resultsVC.viewModel.artistListPage = searchResults?.artists
-            resultsVC.viewModel.trackListPage = searchResults?.tracks
+            resultsVC.viewModel.setDataSource(searchResults)
         }
     }
     

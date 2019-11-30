@@ -7,6 +7,8 @@
 //
 import Foundation
 
+//Should we create a protocol that includes the methods for the view model?
+//We are mostly using closures to get our callbacks... should we consider using delegates in some places?
 class SptSearchViewModel{
     
     //item objects for each result type
@@ -21,7 +23,6 @@ class SptSearchViewModel{
     
     var imageCache = NSCache<NSString, UIImage>()
     
-    //TODO: remove reference to the interactor on the view model - write tests that can be mocked with the spotify protocol
     lazy var spotifyInteractor: SpotifyProtocol = SpotifyInteractor()
     
     //might need the full artist object to get this
@@ -66,6 +67,24 @@ class SptSearchViewModel{
         let startIndex = updatedResults.count - newItems.count
         let endIndex = startIndex + newItems.count
         return (startIndex..<endIndex).map { IndexPath(row: $0, section: 0) }
+    }
+    
+    func setDataSource(_ searchResponse: SearchResponseObject?) {
+        //set list page objects
+        albumListPage = searchResponse?.albums
+        artistListPage = searchResponse?.artists
+        trackListPage = searchResponse?.tracks
+        
+        //set data source
+        albumResults = albumListPage?.items
+        artistResults = artistListPage?.items
+        trackResults = trackListPage?.items
+    }
+    
+    func executeSearch(_ text: String) {
+        spotifyInteractor.search(with: text, types: [.Album,.Artist,.Track]) { (searchResponse) in
+            self.setDataSource(searchResponse)
+        }
     }
     
     func handlePrefetch<Item>(for listPage: ListPageObject<Item>?, scope: SearchScope, completion: @escaping ([IndexPath])->Void) {

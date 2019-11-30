@@ -12,6 +12,7 @@ import Foundation
 // implement feature to pause and resume downloads depending on whether the user still requires that content at the time
 // implement feature to store the resume data object if the download fails
 // consider what you could do to create this as a framework potentially
+// consider increasing the payload to 50 instead of 20 to load more data before the first page loads
 
 class SpotifyInteractor: SpotifyProtocol {
     
